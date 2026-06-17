@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('longitud')->nullable();
             $table->string('latitud')->nullable();
             $table->integer('type')->default(0);
-            $table->unsignedBigInteger('unity_id')->nullable();
+            $table->foreignId('unity_id')->nullable()->constrained()->nullOnDelete();
             $table->json('tickets')->nullable();
         });
     }

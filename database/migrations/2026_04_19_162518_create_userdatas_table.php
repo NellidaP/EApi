@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('userdatas', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
+            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->json('data')->nullable();
             $table->json('data_ticket')->nullable();
             $table->timestamps();

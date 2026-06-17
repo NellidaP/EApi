@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('documents', function (Blueprint $table) {
             $table->id();
-            $table->text('url');
+            $table->string('url', 500);
             $table->string('documentable_type');
+            $table->tinyInteger('type')->default(0);
             $table->unsignedBigInteger('documentable_id');
             $table->timestamps();
         });

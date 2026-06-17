@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('unity_users', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('unity_id');
-            $table->unsignedBigInteger('user_id');
+            $table->foreignId('unity_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->integer('type')->default(0);
             $table->timestamps();
         });

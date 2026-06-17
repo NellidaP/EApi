@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('jornadas', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
+            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->string('longitud')->nullable();
             $table->string('latitud')->nullable();
             $table->integer('estado')->default(0);
