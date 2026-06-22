@@ -1,17 +1,24 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Http\Resources\UserResource;
+//use App\Models\Userdata;
 
 class UserController extends Controller
 {
     public function index()
     {
-        $users = User::all();
+        $users = User::getOrPaginate();
+
+        //return '{"ff": "aca bien"}';
+        /* return response()->json([
+            'message' => 'Lista de usuarios',
+            'data' => UserResource::collection($users)
+        ]); */
         return UserResource::collection($users);
     }
 

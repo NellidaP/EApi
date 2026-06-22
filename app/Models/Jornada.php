@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Jornada extends Model
+class Jornada extends Api
 {
     /** @use HasFactory<\Database\Factories\JornadaFactory> */
     use HasFactory;

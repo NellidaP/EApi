@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Models\Document;
-use App\Http\Requests\StoreDocumentRequest;
-use App\Http\Requests\UpdateDocumentRequest;
+use App\Models\UnityUser;
+use App\Http\Requests\StoreUnityUserRequest;
+use App\Http\Requests\UpdateUnityUserRequest;
 
-class DocumentController extends Controller
+class UnityUserController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -27,7 +27,7 @@ class DocumentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreDocumentRequest $request)
+    public function store(StoreUnityUserRequest $request)
     {
         //
     }
@@ -35,7 +35,7 @@ class DocumentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Document $document)
+    public function show(UnityUser $unityUser)
     {
         //
     }
@@ -43,7 +43,7 @@ class DocumentController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Document $document)
+    public function edit(UnityUser $unityUser)
     {
         //
     }
@@ -51,7 +51,7 @@ class DocumentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateDocumentRequest $request, Document $document)
+    public function update(UpdateUnityUserRequest $request, UnityUser $unityUser)
     {
         //
     }
@@ -59,7 +59,7 @@ class DocumentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Document $document)
+    public function destroy(UnityUser $unityUser)
     {
         //
     }

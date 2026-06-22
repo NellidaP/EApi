@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Models\Userdata;
-use App\Http\Requests\StoreUserdataRequest;
-use App\Http\Requests\UpdateUserdataRequest;
+use App\Models\Unity;
+use App\Http\Requests\StoreUnityRequest;
+use App\Http\Requests\UpdateUnityRequest;
 
-class UserdataController extends Controller
+class UnityController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -27,7 +27,7 @@ class UserdataController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreUserdataRequest $request)
+    public function store(StoreUnityRequest $request)
     {
         //
     }
@@ -35,7 +35,7 @@ class UserdataController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Userdata $userdata)
+    public function show(Unity $unity)
     {
         //
     }
@@ -43,7 +43,7 @@ class UserdataController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Userdata $userdata)
+    public function edit(Unity $unity)
     {
         //
     }
@@ -51,7 +51,7 @@ class UserdataController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateUserdataRequest $request, Userdata $userdata)
+    public function update(UpdateUnityRequest $request, Unity $unity)
     {
         //
     }
@@ -59,7 +59,7 @@ class UserdataController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Userdata $userdata)
+    public function destroy(Unity $unity)
     {
         //
     }

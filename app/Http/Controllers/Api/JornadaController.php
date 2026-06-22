@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Models\UnityUser;
-use App\Http\Requests\StoreUnityUserRequest;
-use App\Http\Requests\UpdateUnityUserRequest;
+use App\Models\Jornada;
+use App\Http\Requests\StoreJornadaRequest;
+use App\Http\Requests\UpdateJornadaRequest;
 
-class UnityUserController extends Controller
+class JornadaController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -27,7 +27,7 @@ class UnityUserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreUnityUserRequest $request)
+    public function store(StoreJornadaRequest $request)
     {
         //
     }
@@ -35,7 +35,7 @@ class UnityUserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(UnityUser $unityUser)
+    public function show(Jornada $jornada)
     {
         //
     }
@@ -43,7 +43,7 @@ class UnityUserController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(UnityUser $unityUser)
+    public function edit(Jornada $jornada)
     {
         //
     }
@@ -51,7 +51,7 @@ class UnityUserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateUnityUserRequest $request, UnityUser $unityUser)
+    public function update(UpdateJornadaRequest $request, Jornada $jornada)
     {
         //
     }
@@ -59,7 +59,7 @@ class UnityUserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(UnityUser $unityUser)
+    public function destroy(Jornada $jornada)
     {
         //
     }

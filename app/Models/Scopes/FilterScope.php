@@ -20,7 +20,7 @@ class FilterScope implements Scope
 
         $filters = request('filters');
         
-        foreach ($filters as $field => $conditions) {
+        /* foreach ($filters as $field => $conditions) {
             foreach ($conditions as $operator => $value) {
                 if (in_array($operator, ['=', '>', '<', '>=', '<=', '!='])) {
                     $builder->where($field, $operator, $value);
@@ -30,7 +30,7 @@ class FilterScope implements Scope
                     $builder->where($field, 'like', "%$value%");
                 }
             }
-        }
+        } */
 
     }
 }

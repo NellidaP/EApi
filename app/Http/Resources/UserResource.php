@@ -15,15 +15,20 @@ class UserResource extends JsonResource
     public function toArray(Request $request): array
     {
         // prepare userdata and remove created_at/updated_at if present
-        $userdata = $this->userdata;
-        unset($userdata['created_at'], $userdata['updated_at']);
+        //$userdata2 = $this->userdata;
+        //unset($userdata2['created_at'], $userdata2['updated_at']);
 
-        return [
+        /* return [
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'roles' => $this->roles->pluck('name', 'id'),
-            'userdata' => $userdata,
-        ];
+            'permisssions' => $this->getAllPermissions()->pluck( 'id'),
+            'unities' => UnityResource::collection($this->whenLoaded('unities')),
+            'roles' => auth()->user()->hasAnyPermission(['view-roles','admin']) ? RoleResource::collection($this->whenLoaded('roles')) : null  ,
+            'userdatas' => UserdataResource::collection($this->whenLoaded('userdatas')),
+        ]; */
+
+
+        return parent::toArray($request);
     }
 }

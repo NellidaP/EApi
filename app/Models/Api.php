@@ -16,15 +16,20 @@ class Api extends Model
             FilterScope::class,
             SelectScope::class,
             SortScope::class,
-            IncludeScope::class
+            //IncludeScope::class
         ]);
     }
 
     public function scopeGetOrPaginate($query)
     {
+        if (request('include')) {
+            $include = explode(',', request('include'));
+            $query->with($include);
+        }
         if (request()->has('perPage')) {
             return $query->paginate(request()->query('perPage'));
         }
+        
 
         return $query->get();
         

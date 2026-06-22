@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Userdata extends Model
+class UserData extends Api
 {
-    /** @use HasFactory<\Database\Factories\UserdataFactory> */
+    /** @use HasFactory<\Database\Factories\UserDataFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -16,4 +16,12 @@ class Userdata extends Model
         'data_ticket',
         // Agrega aquí otros campos que quieras permitir asignar masivamente
     ];
+
+    protected $table = 'userdatas';
+
+
+    public function User()
+    {
+        return $this->belongsTo(User::class);  
+    }
 }

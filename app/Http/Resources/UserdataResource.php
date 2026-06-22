@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class RoleResource extends JsonResource
+class UserdataResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,9 +14,9 @@ class RoleResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $this->permissions = $this->permissions;
-        $data = parent::toArray($request);
-        $data['permissions'] = $this->permissions->pluck( 'name', 'id'  );
-        return $data;
+        // prepare userdata and remove created_at/updated_at if present
+
+
+        return parent::toArray($request);
     }
 }

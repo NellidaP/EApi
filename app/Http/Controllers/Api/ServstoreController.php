@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Models\Unity;
-use App\Http\Requests\StoreUnityRequest;
-use App\Http\Requests\UpdateUnityRequest;
+use App\Models\Servstore;
+use App\Http\Requests\StoreServstoreRequest;
+use App\Http\Requests\UpdateServstoreRequest;
 
-class UnityController extends Controller
+class ServstoreController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -27,7 +27,7 @@ class UnityController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreUnityRequest $request)
+    public function store(StoreServstoreRequest $request)
     {
         //
     }
@@ -35,7 +35,7 @@ class UnityController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Unity $unity)
+    public function show(Servstore $servstore)
     {
         //
     }
@@ -43,7 +43,7 @@ class UnityController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Unity $unity)
+    public function edit(Servstore $servstore)
     {
         //
     }
@@ -51,7 +51,7 @@ class UnityController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateUnityRequest $request, Unity $unity)
+    public function update(UpdateServstoreRequest $request, Servstore $servstore)
     {
         //
     }
@@ -59,7 +59,7 @@ class UnityController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Unity $unity)
+    public function destroy(Servstore $servstore)
     {
         //
     }

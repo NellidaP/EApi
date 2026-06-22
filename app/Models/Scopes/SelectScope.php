@@ -14,12 +14,12 @@ class SelectScope implements Scope
     public function apply(Builder $builder, Model $model): void
     {
         //Aplicar selects
-        if (empty(request('select'))) {
+        /* if (empty(request('select'))) {
             return;
         }
 
         $select = request('select');
         $selectArray = explode(',', $select);
-        $builder->select($selectArray);
+        $builder->select($selectArray); */
     }
 }

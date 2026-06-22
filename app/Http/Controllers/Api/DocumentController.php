@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Models\Servstore;
-use App\Http\Requests\StoreServstoreRequest;
-use App\Http\Requests\UpdateServstoreRequest;
+use App\Models\Document;
+use App\Http\Requests\StoreDocumentRequest;
+use App\Http\Requests\UpdateDocumentRequest;
 
-class ServstoreController extends Controller
+class DocumentController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -27,7 +27,7 @@ class ServstoreController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreServstoreRequest $request)
+    public function store(StoreDocumentRequest $request)
     {
         //
     }
@@ -35,7 +35,7 @@ class ServstoreController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Servstore $servstore)
+    public function show(Document $document)
     {
         //
     }
@@ -43,7 +43,7 @@ class ServstoreController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Servstore $servstore)
+    public function edit(Document $document)
     {
         //
     }
@@ -51,7 +51,7 @@ class ServstoreController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateServstoreRequest $request, Servstore $servstore)
+    public function update(UpdateDocumentRequest $request, Document $document)
     {
         //
     }
@@ -59,7 +59,7 @@ class ServstoreController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Servstore $servstore)
+    public function destroy(Document $document)
     {
         //
     }

@@ -1,22 +1,23 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+
 
 class AuthController extends Controller implements HasMiddleware
 {
     public static function middleware(): array
     {
         return [
-            new Middleware('auth:api', except: [ 'login']),
+            //new Middleware('auth:api', except: [ 'login']),
             // agrega middleware de permisos, requiriendo el permiso "admin"
             // se excluyen las rutas de registro y login
-            new Middleware('permissions:admin', except: ['login']),
+            new Middleware('permission:admin', except: ['login']),
         ];
     }
 
@@ -36,7 +37,10 @@ class AuthController extends Controller implements HasMiddleware
 
         $userdata = $user->userdata()->create(); // Crea un registro en user_data para el nuevo usuario
 
-        return $this->login();
+        return response()->json([
+            'message' => 'Usuario registrado exitosamente',
+            'user' => $user
+        ], 201) ;
     }
 
     public function login()

@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Models\Jornada;
-use App\Http\Requests\StoreJornadaRequest;
-use App\Http\Requests\UpdateJornadaRequest;
+use App\Models\UserData;
+use App\Http\Requests\StoreUserdataRequest;
+use App\Http\Requests\UpdateUserdataRequest;
 
-class JornadaController extends Controller
+class UserDataController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -27,7 +27,7 @@ class JornadaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreJornadaRequest $request)
+    public function store(StoreUserdataRequest $request)
     {
         //
     }
@@ -35,7 +35,7 @@ class JornadaController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Jornada $jornada)
+    public function show(Userdata $userdata)
     {
         //
     }
@@ -43,7 +43,7 @@ class JornadaController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Jornada $jornada)
+    public function edit(Userdata $userdata)
     {
         //
     }
@@ -51,7 +51,7 @@ class JornadaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateJornadaRequest $request, Jornada $jornada)
+    public function update(UpdateUserdataRequest $request, Userdata $userdata)
     {
         //
     }
@@ -59,7 +59,7 @@ class JornadaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Jornada $jornada)
+    public function destroy(Userdata $userdata)
     {
         //
     }

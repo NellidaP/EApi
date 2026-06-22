@@ -19,6 +19,6 @@ class IncludeScope implements Scope
         }
 
         $include = explode(',', request('include'));
-        $builder->with($include);
+        //$builder->with($include);
     }
 }
