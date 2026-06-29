@@ -126,9 +126,9 @@ class User extends Authenticatable implements JWTSubject
 
 
     // Relación uno a muchos con UserData
-    public function userdatas()
+    public function userdata()
     {
-        return $this->hasMany(UserData::class);  
+        return $this->hasOne(UserData::class);  
     }
 
     public function permissions()
@@ -161,6 +161,16 @@ class User extends Authenticatable implements JWTSubject
     public function unities()
     {
         return $this->belongsToMany(Unity::class, 'unity_users', 'user_id', 'unity_id');
+    }
+
+    public function documents()
+    {
+        return $this->morphMany(Document::class, 'documentable');
+    }
+
+    public function books()
+    {
+        return $this->morphMany(Book::class, 'bookable');
     }
 
     

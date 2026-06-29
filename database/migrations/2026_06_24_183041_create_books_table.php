@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('userdatas', function (Blueprint $table) {
+        Schema::create('books', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
+            $table->string('name');
             $table->json('data')->nullable();
-            $table->json('data_ticket')->nullable();
+            $table->text('description')->nullable();
+            $table->morphs('bookable');
             $table->timestamps();
-            $table->smallInteger('type')->default(0);
         });
     }
 
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('userdatas');
+        Schema::dropIfExists('books');
     }
 };

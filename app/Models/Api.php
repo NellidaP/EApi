@@ -13,7 +13,7 @@ class Api extends Model
     protected static function booted(): void
     {
         static::addGlobalScopes([
-            FilterScope::class,
+            //FilterScope::class,
             SelectScope::class,
             SortScope::class,
             //IncludeScope::class
@@ -22,9 +22,31 @@ class Api extends Model
 
     public function scopeGetOrPaginate($query)
     {
+        if(request('select')){
+             $select = request('select');
+             $selectArray = explode(',', $select);
+             $query->select($selectArray);
+        }
+
         if (request('include')) {
             $include = explode(',', request('include'));
             $query->with($include);
+        }
+
+        if(request('filters')){
+            $filters = request('filters');
+            foreach ($filters as $field => $conditions) {
+            foreach ($conditions as $operator => $value) {
+                if (in_array($operator, ['=', '>', '<', '>=', '<=', '!='])) {
+                    $query->where($field, $operator, $value);
+                } 
+
+                if ($operator == 'like') {
+                    $query->where($field, 'like', "%$value%");
+                }
+            }
+        }
+
         }
         if (request()->has('perPage')) {
             return $query->paginate(request()->query('perPage'));

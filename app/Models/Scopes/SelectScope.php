@@ -22,4 +22,4 @@ class SelectScope implements Scope
         $selectArray = explode(',', $select);
         $builder->select($selectArray); */
     }
-}
+}  

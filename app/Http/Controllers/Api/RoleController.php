@@ -92,12 +92,14 @@ class RoleController extends Controller
     }
 
     public function assignRolesToUser(Request $request)
-    {
+    {   //dd($request->all());
         $data = $request->validate([
             'roles' => 'required|array',
             'roles.*' => 'integer|exists:roles,id',
             'user_id' => 'required|integer|exists:users,id',
         ]);
+
+        
 
         $user = User::find($data['user_id']);
         if (!$user) {

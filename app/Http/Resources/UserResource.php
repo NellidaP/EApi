@@ -18,15 +18,16 @@ class UserResource extends JsonResource
         //$userdata2 = $this->userdata;
         //unset($userdata2['created_at'], $userdata2['updated_at']);
 
-        /* return [
+        return [
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
             'permisssions' => $this->getAllPermissions()->pluck( 'id'),
             'unities' => UnityResource::collection($this->whenLoaded('unities')),
             'roles' => auth()->user()->hasAnyPermission(['view-roles','admin']) ? RoleResource::collection($this->whenLoaded('roles')) : null  ,
-            'userdatas' => UserdataResource::collection($this->whenLoaded('userdatas')),
-        ]; */
+            'userdata' => new UserdataResource($this->whenLoaded('userdata')),
+            'books' => BookResource::collection($this->whenLoaded('books')),
+        ];
 
 
         return parent::toArray($request);

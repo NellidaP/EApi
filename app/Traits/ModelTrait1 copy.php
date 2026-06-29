@@ -31,11 +31,7 @@ trait ModelTrait1
     public function setDataJson($matriz, $path='data', $column='data'){
 
         $object = json_encode($matriz, JSON_FORCE_OBJECT);
-        if($path == null){
-            $query = "UPDATE ".$this->table." SET ".$column." = JSON_SET(".$column.", '$' , JSON_EXTRACT('".addslashes($object)."', '$')) WHERE id = ".$this->id;
-        } else {
-            $query = "UPDATE ".$this->table." SET ".$column." = JSON_SET(".$column.", '$.".$path."' , JSON_EXTRACT('".addslashes($object)."', '$')) WHERE id = ".$this->id;
-        }
+        $query = "UPDATE ".$this->table." SET ".$column." = JSON_SET(".$column.", '$.".$path."' , JSON_EXTRACT('".$object."', '$')) WHERE id = ".$this->id;
         //return $query;
         $json = DB::update($query);
         return $query;
@@ -91,7 +87,7 @@ trait ModelTrait1
     }
 
     //Sección de Borrar un Item de la tabla stocktaking_items junto con sus archivos
-    public function deleteitem( $tag, $path=null, $column='data' ){
+    public function deleteitem( $tag, $path='data', $column='data' ){
 
         $this->refresh();
         $model = strtolower((new ReflectionClass($this::class))->getShortName());
@@ -104,12 +100,7 @@ trait ModelTrait1
                 }
             }
         
-        if($path == null){
-            $query = "UPDATE ".$this->table." SET ".$column." = JSON_REMOVE(".$column.", '$.".$tag."') WHERE id = ".$this->id;
-        } else {
-            $query = "UPDATE ".$this->table." SET ".$column." = JSON_REMOVE(".$column.", '$.".$path.'.'.$tag."') WHERE id = ".$this->id;
-        }
-        
+        $query = "UPDATE ".$this->table." SET ".$column." = JSON_REMOVE(".$column.", '$.".$path.".".$tag."') WHERE id = ".$this->id;
         $json = DB::update($query);
         return $query;
     }
@@ -150,8 +141,9 @@ trait ModelTrait1
                 'url' => self::saveFile($request->file('file'), $model),
                 'origname' => $request->file('file')->getClientOriginalName(),
                 'id' => $sid,
-
             ];
+            
+            
             unset($data['file']);
         } elseif ($request->hasFile('files')) {
             foreach ($request->file('files') ?? [] as $index => $file) {
@@ -160,72 +152,23 @@ trait ModelTrait1
                     'url' => self::saveFile($file, $model),
                     'origname' => $file->getClientOriginalName(),
                     'id' => $sid,
-
+                    
                 ];
+                
             }
+            
             unset($data['files']);
         }
+        $data['name'] = $request->input('name', null);
+        $data['description'] = $request->input('description', null);
 
         //$data['act'] = true;
         unset($data['_token'], $data['SUBMIT']);
 
-        $this->setDataJson($data,  $path , $column);
-
-        return $data;
-
-    }
-
-
-    public function addfiles2page( Request $request , $variable, $path='data', $column='data'){
-        
-        $data = $request->all();
-
-        if($this->$column == null){
-            $this->$column = json_encode([]);
-            $this->save();
-            $this->refresh();
-        }
-
-        //dd($data);
-        //$data['id'] = (Str::random(6)) . (Str::subStr(time(), -6));
-        $model = strtolower((new ReflectionClass($this::class))->getShortName());
-        $data = $this->getItemDataJson(null, $column, $this->table) ? $this->getItemDataJson(null, $column, $this->table) : [];
-        //dd($data);
-        //dd($this->getItemDataJson($path, $column, $this->table));
-        $data[$variable] =[];
-        if ($request->hasFile('file')) {
-            $sid = (Str::random(6)) . (Str::subStr(time(), -6));
-            $data[$variable]['archivos'][$sid] = [
-                'url' => self::saveFile($request->file('file'), $model),
-                'origname' => $request->file('file')->getClientOriginalName(),
-                'id' => $sid,
-
-            ];
-            unset($data['file']);
-        } elseif ($request->hasFile('files')) {
-            foreach ($request->file('files') ?? [] as $index => $file) {
-                $sid = (Str::random(6)) . (Str::subStr(time(), -6));
-                $data[$variable]['archivos'][$sid] = [
-                    'url' => self::saveFile($file, $model),
-                    'origname' => $file->getClientOriginalName(),
-                    'id' => $sid,
-
-                ];
-            }
-            unset($data['files']);
-        }
-
-        $data[$variable]['titulo'] = $request->input('titulo', '');
-        
-        $datos_d = $request->input('descripcion', '');
-        json_encode($datos_d, JSON_UNESCAPED_UNICODE); 
-        $data[$variable]['descripcion'] = $datos_d;
-        $data[$variable]['id'] = $variable;
-
-        //$data['act'] = true;
-        unset($data['_token'], $data['SUBMIT']);
-
-        $this->setDataJson($data,  $path , $column);
+         $query = "UPDATE ".$this->table." SET ".$column." = JSON_SET(".$column.", '$.".$path."' , JSON_EXTRACT('".json_encode($data)."', '$')) WHERE id = ".$this->id;
+        $json = DB::update($query);
+        $this->refresh();
+        //$this->setDataJson($data,  $path , $column);
 
         return $data;
 
@@ -254,17 +197,8 @@ trait ModelTrait1
 
     //Obtener un bloque en formato JSON de la tabla stocktaking_items
     public function getDataJson($block='data', $column='data'){
-        if($block == null){
-            $query = "SELECT JSON_EXTRACT(".$column." , '$') AS dato FROM ".$this->table." WHERE id = ".$this->id;
-            $this->refresh();
-            return json_decode(json_encode(json_decode($this->$column)), true);
-            } else {
-            $query = "SELECT JSON_EXTRACT(".$column." , '$.".$block."') AS dato FROM ".$this->table." WHERE id = ".$this->id;
-            
-            $this->refresh();
-            return json_decode(json_encode(json_decode($this->$column)->$block), true);
-            }
-        
+        $this->refresh();
+        return json_decode(json_encode(json_decode($this->$column)->$block), true);
 
     }
 
@@ -292,12 +226,7 @@ trait ModelTrait1
     if($table == null){
         $table = $this->table;
     }
-        if($path == null){
-            $query = "SELECT JSON_EXTRACT(".$column." , '$') AS dato FROM ".($table)." WHERE id = ".$this->id;
-        }else{
-            $query = "SELECT JSON_EXTRACT(".$column." , '$.".$path."') AS dato FROM ".($table)." WHERE id = ".$this->id;
-        }
-        
+        $query = "SELECT JSON_EXTRACT(".$column." , '$.".$path."') AS dato FROM ".($table)." WHERE id = ".$this->id;
         /* SELECT  JSON_EXTRACT(DATA , '$.items.uZWbEz433995') AS uZWbEz433995 FROM stocktakings */
         //$query = "SELECT JSON_EXTRACT('data', '$.".$block.".".$item."') AS dato FROM ".$this->table." WHERE id = ".$this->id;
         $json = DB::select($query);

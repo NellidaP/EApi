@@ -37,7 +37,7 @@ class UnityPolicy
      */
     public function update(User $user, Unity $unity): bool
     {
-        return false;
+        return true;
     }
 
     /**

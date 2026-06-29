@@ -43,11 +43,37 @@ class AuthController extends Controller implements HasMiddleware
         ], 201) ;
     }
 
+    public function deleteUser(Request $request)
+    {
+        $user = User::find($request->input('user_id'));
+
+        if (!$user) {
+            return response()->json(['error' => 'Usuario no autenticado'], 401);
+        }
+
+        // Eliminar el usuario
+        $user->delete();
+
+        return response()->json(['message' => 'Usuario eliminado exitosamente']);
+    }
+
     public function login()
     {
         $credentials = request(['email', 'password']);
+        /* $credentials = [
+            'email' => "francisco.pintofd@gmail.com",
+            'password' => bcrypt('12345678')
+        ]; */
 
-        if (! $token = auth('api')->attempt($credentials)) {
+        if(User::where('email', $credentials['email'])->count() == 0) {
+            return response()->json(['error' => 'Usuario no encontrado'], 404);
+        }
+
+        if(User::where('email', $credentials['email'])?->first()?->activo == 0) {
+            return response()->json(['error' => 'Usuario inactivo'], 403);
+        }
+
+        if (!$token = auth('api')->attempt($credentials) ) {
             return response()->json(['error' => 'No autorizado'], 401);
         }
 
@@ -57,6 +83,14 @@ class AuthController extends Controller implements HasMiddleware
     public function me()
     {
         return response()->json(auth('api')->user());
+    }
+
+    public function myPermissions()
+    {
+        $user = auth('api')->user();
+        $permissions = $user->getAllPermissions()->pluck('name');
+
+        return response()->json($permissions);
     }
 
     public function logout()

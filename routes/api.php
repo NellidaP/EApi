@@ -8,6 +8,8 @@ use App\Models\User;
 use App\Http\Controllers\Api\PermissionController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\UnityController;
+use App\Http\Controllers\Api\BookController;
 
 
 
@@ -22,11 +24,22 @@ Route::middleware([
     Route::post('auth/logout', [AuthController::class, 'logout']);
     Route::post('auth/refresh', [AuthController::class, 'refresh']);
     Route::post('auth/me', [AuthController::class, 'me']);
+    Route::post('auth/mypermissions', [AuthController::class, 'myPermissions']);
+    Route::post('auth/delete', [AuthController::class, 'deleteUser']);
         
+    Route::post('users/{user}/addfiles', [UserController::class, 'addfiles']);
+    Route::post('users/{user}/deletefile', [UserController::class, 'deletefile']);
+    Route::post('users/{user}/addbook', [UserController::class, 'addbook']);
+    Route::post('books/{book}/addfiles2page', [BookController::class, 'addfiles2page']);
+    Route::post('books/{book}/deletefile', [BookController::class, 'deletefile']);
+    Route::post('books/{book}/deletepage', [BookController::class, 'deletepage']);
+    Route::apiResource('books', BookController::class);
     Route::apiResource('users', UserController::class);
     Route::apiResource('permissions', PermissionController::class);
     
     Route::get('roles/rolestouser', [RoleController::class, 'assignRolesToUser']);
     Route::apiResource('roles', RoleController::class);
+    Route::apiResource('unities', UnityController::class);
+
 
     });
