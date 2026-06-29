@@ -31,8 +31,10 @@ Route::middleware([
     Route::post('users/{user}/deletefile', [UserController::class, 'deletefile']);
     Route::post('users/{user}/addbook', [UserController::class, 'addbook']);
     Route::post('books/{book}/addfiles2page', [BookController::class, 'addfiles2page']);
+    Route::post('books/{book}/deletefile2page', [BookController::class, 'deletefile2page']);
     Route::post('books/{book}/deletefile', [BookController::class, 'deletefile']);
     Route::post('books/{book}/deletepage', [BookController::class, 'deletepage']);
+    Route::get('books/{book}/showpage', [BookController::class, 'showpage']);
     Route::apiResource('books', BookController::class);
     Route::apiResource('users', UserController::class);
     Route::apiResource('permissions', PermissionController::class);

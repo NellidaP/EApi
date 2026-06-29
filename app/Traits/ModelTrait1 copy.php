@@ -183,14 +183,27 @@ trait ModelTrait1
         $this->refresh();
         $model = strtolower((new ReflectionClass($this::class))->getShortName());
 
-        $data = $this->getDataJson($path);
+        if($path == null){
+            $data = $this->getDataJson(null, $column);
+        }else{
+            $data = $this->getDataJson($path, $column);
+        }
+        dd($data);
+        //$data = $this->getDataJson($path);
             if(isset($data[$variable]['archivos'])){
                     if(isset($data[$variable]['archivos'][$fileid]['url'])){
                         Storage::disk('public')->delete($model, $file['url']);
                     }
             }
+
+
+        if($path == null){
+            $query = "UPDATE ".$this->table." SET ".$column." = JSON_REMOVE(".$column.", '$.".$variable.".archivos.".$fileid."') WHERE id = ".$this->id;
+        }else{
+            $query = "UPDATE ".$this->table." SET ".$column." = JSON_REMOVE(".$column.", '$.".$path.'.'.$variable.".".$fileid."') WHERE id = ".$this->id;
+        }
         
-        $query = "UPDATE ".$this->table." SET ".$column." = JSON_REMOVE(".$column.", '$.".$path.'.'.$variable.".".$fileid."') WHERE id = ".$this->id;
+        //$query = "UPDATE ".$this->table." SET ".$column." = JSON_REMOVE(".$column.", '$.".$path.'.'.$variable.".".$fileid."') WHERE id = ".$this->id;
         $json = DB::update($query);
         return true;
     }
@@ -198,7 +211,14 @@ trait ModelTrait1
     //Obtener un bloque en formato JSON de la tabla stocktaking_items
     public function getDataJson($block='data', $column='data'){
         $this->refresh();
-        return json_decode(json_encode(json_decode($this->$column)->$block), true);
+
+        if($block == null){
+            return json_decode(json_encode(json_decode($this->$column)), true);
+        }else{
+             return json_decode(json_encode(json_decode($this->$column)->$block), true);
+        }
+
+       
 
     }
 
@@ -223,15 +243,15 @@ trait ModelTrait1
 
     //Toma un item especifico desde el JSON y lo actualiza con la matriz dada
     public function getItemDataJson($path, $column='data', $table=null){
-    if($table == null){
-        $table = $this->table;
-    }
-        $query = "SELECT JSON_EXTRACT(".$column." , '$.".$path."') AS dato FROM ".($table)." WHERE id = ".$this->id;
-        /* SELECT  JSON_EXTRACT(DATA , '$.items.uZWbEz433995') AS uZWbEz433995 FROM stocktakings */
-        //$query = "SELECT JSON_EXTRACT('data', '$.".$block.".".$item."') AS dato FROM ".$this->table." WHERE id = ".$this->id;
-        $json = DB::select($query);
-        return $json[0]->dato?json_decode(json_encode(json_decode($json[0]->dato)), true):null;
-        
+        if($table == null){
+            $table = $this->table;
+        }
+            $query = "SELECT JSON_EXTRACT(".$column." , '$.".$path."') AS dato FROM ".($table)." WHERE id = ".$this->id;
+            /* SELECT  JSON_EXTRACT(DATA , '$.items.uZWbEz433995') AS uZWbEz433995 FROM stocktakings */
+            //$query = "SELECT JSON_EXTRACT('data', '$.".$block.".".$item."') AS dato FROM ".$this->table." WHERE id = ".$this->id;
+            $json = DB::select($query);
+            return $json[0]->dato?json_decode(json_encode(json_decode($json[0]->dato)), true):null;
+            
 
     }
 

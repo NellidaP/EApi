@@ -193,6 +193,9 @@ trait ModelTrait1
         //dd($data);
         //dd($this->getItemDataJson($path, $column, $this->table));
         $data[$variable] =[];
+        if(!isset($data[$variable]['archivos'])){
+            $data[$variable]['archivos'] = [];
+        }
         if ($request->hasFile('file')) {
             $sid = (Str::random(6)) . (Str::subStr(time(), -6));
             $data[$variable]['archivos'][$sid] = [
@@ -233,21 +236,33 @@ trait ModelTrait1
 
     //Borra un archivo de un path
     public function deletefile(   $fileid , $variable ,$path='data', $column='data'){
-        $file = $this->getItemDataJson($path.".".$variable, $column, $this->table);
-        if($file == null){
+
+        //$file = $this->getItemDataJson($path.".".$variable, $column, $this->table);
+        /* if($file == null){
             return null;
-        }
+        } */
         $this->refresh();
         $model = strtolower((new ReflectionClass($this::class))->getShortName());
-
-        $data = $this->getDataJson($path);
+        if($path == null){
+                $data = $this->getDataJson(null, $column);
+            }else{
+                $data = $this->getDataJson($path, $column);
+            }
+        //dd($data);
+        //$data = $this->getDataJson($path);
             if(isset($data[$variable]['archivos'])){
                     if(isset($data[$variable]['archivos'][$fileid]['url'])){
-                        Storage::disk('public')->delete($model, $file['url']);
+                        Storage::disk('public')->delete($model, $data[$variable]['archivos'][$fileid]['url']);
                     }
             }
+
+        if($path == null){
+            $query = "UPDATE ".$this->table." SET ".$column." = JSON_REMOVE(".$column.", '$.".$variable.".archivos.".$fileid."') WHERE id = ".$this->id;
+        }else{
+            $query = "UPDATE ".$this->table." SET ".$column." = JSON_REMOVE(".$column.", '$.".$path.'.'.$variable.".".$fileid."') WHERE id = ".$this->id;
+        }    
         
-        $query = "UPDATE ".$this->table." SET ".$column." = JSON_REMOVE(".$column.", '$.".$path.'.'.$variable.".".$fileid."') WHERE id = ".$this->id;
+        //$query = "UPDATE ".$this->table." SET ".$column." = JSON_REMOVE(".$column.", '$.".$path.'.'.$variable.".".$fileid."') WHERE id = ".$this->id;
         $json = DB::update($query);
         return true;
     }
@@ -262,7 +277,7 @@ trait ModelTrait1
             $query = "SELECT JSON_EXTRACT(".$column." , '$.".$block."') AS dato FROM ".$this->table." WHERE id = ".$this->id;
             
             $this->refresh();
-            return json_decode(json_encode(json_decode($this->$column)->$block), true);
+            return json_decode(json_encode(json_decode($this->$column)), true)[$block]??null;
             }
         
 

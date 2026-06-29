@@ -82,7 +82,13 @@ class BookController extends Controller
 
         // Agregar el archivo al libro usando el trait ModelTrait1
 
-        $hoja_id = (Str::random(6)) . (Str::subStr(time(), -6));
+        if($request->input('hoja_id')){
+            $hoja_id = $request->input('hoja_id');
+        }else{
+            $hoja_id = (Str::random(6)) . (Str::subStr(time(), -6));
+        }
+
+        //$hoja_id = (Str::random(6)) . (Str::subStr(time(), -6));
 
         
 
@@ -93,7 +99,7 @@ class BookController extends Controller
         $book->refresh(); // Refresca el modelo para obtener los datos actualizados
         return response()->json([
             'message' => 'Archivo agregado exitosamente',
-            'book' => $book
+            'book' => new BookResource($book)
         ], 200);
     }
 
@@ -118,7 +124,7 @@ class BookController extends Controller
         ], 200);
     }
 
-    public function deletepageñoyoglogll(Book $book, Request $request)
+    public function deletepage(Book $book, Request $request)
     {
         // Validar que el usuario tenga permisos para eliminar páginas
         if (!auth()->user()->can('admin')) {
@@ -136,6 +142,50 @@ class BookController extends Controller
         return response()->json([
             'message' => 'Página eliminada exitosamente',
             'book' => $book
+        ], 200);
+    }
+
+    public function deletefile2page(Book $book, Request $request)
+    {
+        // Validar que el usuario tenga permisos para eliminar archivos
+        if (!auth()->user()->can('admin')) {
+            return response()->json(['error' => 'No autorizado'], 403);
+        }
+
+        // Validar que se haya enviado un ID de archivo y un ID de página
+        $request->validate([
+            'file_id' => 'required|string',
+            'page_id' => 'required|string'
+        ]);
+
+        // Eliminar el archivo de la página del libro usando el trait ModelTrait1
+        $book->deletefile($request->file_id, $request->page_id, null, 'data');
+        $book->refresh(); // Refresca el modelo para obtener los datos actualizados
+
+
+        return response()->json([
+            'message' => 'Archivo eliminado de la página exitosamente',
+            'book' => $book
+        ], 200);
+    }
+
+    public function showpage( Book $book, Request $request)
+    {
+        // Validar que se haya enviado un ID de página
+        $request->validate([
+            'page_id' => 'required|string'
+        ]);
+
+        // Obtener la página del libro usando el trait ModelTrait1
+        $page = $book->getDataJson($request->page_id,  'data');
+
+        if (!$page) {
+            return response()->json(['error' => 'Página no encontrada'], 404);
+        }
+
+        return response()->json([
+            'message' => 'Página obtenida exitosamente',
+            'page' => $page
         ], 200);
     }
 }
