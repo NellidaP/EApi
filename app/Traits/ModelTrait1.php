@@ -192,7 +192,10 @@ trait ModelTrait1
         $data = $this->getItemDataJson(null, $column, $this->table) ? $this->getItemDataJson(null, $column, $this->table) : [];
         //dd($data);
         //dd($this->getItemDataJson($path, $column, $this->table));
-        $data[$variable] =[];
+        if(!isset($data[$variable])){
+            $data[$variable] = [];
+        }
+
         if(!isset($data[$variable]['archivos'])){
             $data[$variable]['archivos'] = [];
         }
