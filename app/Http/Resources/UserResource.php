@@ -27,6 +27,7 @@ class UserResource extends JsonResource
             'roles' => auth()->user()->hasAnyPermission(['view-roles','admin']) ? RoleResource::collection($this->whenLoaded('roles')) : null  ,
             'userdata' => new UserdataResource($this->whenLoaded('userdata')),
             'books' => BookResource::collection($this->whenLoaded('books')),
+            'activo' => $this->activo,
         ];
 
 

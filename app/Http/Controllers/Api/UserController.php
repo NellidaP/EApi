@@ -58,6 +58,7 @@ public static function middleware(): array
             'address' => 'sometimes|required|string',
             'dni' => 'sometimes|required|string',
             'birthday' => 'sometimes|required|string',
+            'activo' => 'sometimes|required|integer|in:0,1',
         ]);
 
         //dd($request->all());
@@ -66,6 +67,8 @@ public static function middleware(): array
             'name' => $data['name'] ?? null,
             'email' => $data['email'] ?? null,
             'password' => $data['password'] ?? null,
+            'activo' => $data['activo'] ?? null,
+            
         ];
 
         $userUpdate = array_filter($userUpdate, fn($value) => $value !== null);
@@ -84,7 +87,7 @@ public static function middleware(): array
 
        // actualizar o crear userdata relacionado (relación uno a muchos)
         // se toma el primer registro relacionado y se actualiza; si no existe, se crea uno nuevo
-        $existing['data'] = ($user->userdata)->getDataJson3('data','data') ?? [];
+        $existing['data'] = ($user->userdata)->getDataJson('data','data') ?? [];
 
         //dd($existing);
         

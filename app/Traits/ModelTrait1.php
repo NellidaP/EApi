@@ -324,6 +324,19 @@ trait ModelTrait1
 
     }
 
+    public function safeFileD($path, $file, $size = 240) {
+        if ($file) {
+            // Eliminar el archivo anterior si existe
+            if ($path) {
+                Storage::disk('public')->delete($path);
+            }
+            $carpeta = strtolower((new ReflectionClass($this::class))->getShortName());
+            // Guardar el nuevo archivo
+            return self::saveFile($file, $carpeta, $size);
+        }
+        return $path; // Retornar la ruta original si no hay nuevo archivo
+    }
+
     // Accesorios
     //
     public function getMaxJsonValue($stag,$block='items'){
@@ -363,8 +376,11 @@ trait ModelTrait1
         return array_column( self::OrdenarMatrizColumna($matriz, 1 ,'DES') ,0);
     }
 
+
     public static function saveFile($file, $carpeta, $size = 240) {
         $imageName = time() . '-' . $file->getClientOriginalName();
+
+        
 
         if ($file->isValid() && in_array($file->extension(), ['jpg', 'jpeg', 'png'])) {
             list($width, $height) = getimagesize($file);

@@ -24,10 +24,20 @@ class UnityResource extends JsonResource
             'latitud' => $this->latitud,
             'type' => $this->type,
             'tickets' => $this->tickets,
-            'users' => UserResource::collection($this->whenLoaded('users')),
+
+            'users' => $this->whenLoaded('users', function () {
+                return $this->users->map(function ($user) {
+                    return [
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'email' => $user->email,
+                        'type' => $user->pivot->type,
+                    ];
+                });
+            }),
             'children' => UnityResource::collection($this->whenLoaded('children')),
             'parent' => new UnityResource($this->whenLoaded('parent')),
+            'books' => BookResource::collection($this->whenLoaded('books')),
         ];
-        return parent::toArray($request); 
     }
 }

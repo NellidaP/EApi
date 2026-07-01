@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\UnityController;
 use App\Http\Controllers\Api\BookController;
+use App\Http\Controllers\Api\JornadaController;
 
 
 
@@ -38,9 +39,18 @@ Route::middleware([
     Route::apiResource('books', BookController::class);
     Route::apiResource('users', UserController::class);
     Route::apiResource('permissions', PermissionController::class);
+
+
+    Route::post('jornadas/geo', [App\Http\Controllers\Api\JornadaController::class, 'geoloc']);
     
     Route::get('roles/rolestouser', [RoleController::class, 'assignRolesToUser']);
     Route::apiResource('roles', RoleController::class);
+
+    Route::post('unities/{unity}/adduser', [UnityController::class, 'adduser']);
+    Route::post('unities/{unity}/addbook', [UnityController::class, 'addbook']);
+    Route::post('unities/{unity}/removeuser', [UnityController::class, 'removeuser']);
+    Route::post('unities/{unity}/removebook', [UnityController::class, 'removebook']);
+    
     Route::apiResource('unities', UnityController::class);
 
 

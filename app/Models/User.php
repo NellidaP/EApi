@@ -30,6 +30,7 @@ class User extends Authenticatable implements JWTSubject
         'name',
         'email',
         'password',
+        'activo',
     ];
 
     /**
@@ -160,7 +161,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function unities()
     {
-        return $this->belongsToMany(Unity::class, 'unity_users', 'user_id', 'unity_id');
+        return $this->belongsToMany(Unity::class);
     }
 
     public function documents()

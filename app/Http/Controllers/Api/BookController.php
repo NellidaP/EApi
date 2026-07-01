@@ -99,7 +99,7 @@ class BookController extends Controller
         $book->refresh(); // Refresca el modelo para obtener los datos actualizados
         return response()->json([
             'message' => 'Archivo agregado exitosamente',
-            'book' => new BookResource($book)
+            'page' => $book->getDataJson($hoja_id,  'data')
         ], 200);
     }
 

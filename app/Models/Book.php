@@ -17,8 +17,11 @@ class Book extends Api
         'user_id', // Foreign key to associate the book with a user
     ];
 
-    public function user()
+    public function bookable()
     {
-        return $this->belongsTo(User::class);
+        return $this->morphTo();
     }
+
+
 }
+

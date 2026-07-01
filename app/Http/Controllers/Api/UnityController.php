@@ -17,7 +17,9 @@ class UnityController extends Controller
     {
 
         //
-        return UnityResource::collection(Unity::getOrPaginate());
+        $unities = UnityResource::collection(Unity::getOrPaginate());
+
+        return response()->json($unities);
     }
 
     /**
@@ -42,6 +44,7 @@ class UnityController extends Controller
             'longitud' => 'nullable|string',
             'latitud' => 'nullable|string',
             'type' => 'nullable|string',
+            'mult' => 'nullable|numeric',
         ]);
 
         $unity = Unity::create($data);
@@ -83,7 +86,7 @@ class UnityController extends Controller
             'longitud' => 'sometimes|nullable|string',
             'latitud' => 'sometimes|nullable|string',
             'type' => 'sometimes|nullable|string',
-
+            'mult' => 'sometimes|nullable|numeric',
         ]);
 
         $unity->update($data);
@@ -126,6 +129,97 @@ class UnityController extends Controller
         return response()->json([
             'message' => 'Archivo agregado exitosamente',
             'user' => $user
+        ], 200);
+    }
+
+    public function adduser(Unity $unity, Request $request)
+    {
+        // Validar que el usuario tenga permisos para agregar usuarios
+        if (!auth()->user()->can('admin')) {
+            return response()->json(['error' => 'No autorizado'], 403);
+        }
+
+        // Validar que se haya enviado un user_id
+        $request->validate([
+            'user_id' => 'required|integer|exists:users,id',
+            'type' => 'nullable|string',
+        ]);
+
+        // Agregar el usuario a la unidad
+        $unity->users()->attach($request->input('user_id'), ['type' => $request->input('type')]);
+
+        return response()->json([
+            'message' => 'Usuario agregado exitosamente a la unidad',
+            'unity' => new UnityResource($unity)
+        ], 200);
+    }
+
+    public function removeuser(Unity $unity, Request $request)
+    {
+        // Validar que el usuario tenga permisos para eliminar usuarios
+        if (!auth()->user()->can('admin')) {
+            return response()->json(['error' => 'No autorizado'], 403);
+        }
+
+        // Validar que se haya enviado un user_id
+        $request->validate([
+            'user_id' => 'required|integer|exists:users,id',
+        ]);
+
+        // Eliminar el usuario de la unidad
+        $unity->users()->detach($request->input('user_id'));
+
+        return response()->json([
+            'message' => 'Usuario eliminado exitosamente de la unidad',
+            'unity' => new UnityResource($unity)
+        ], 200);
+    }
+
+    public function addbook(Unity $unity, Request $request)
+    {
+        // Validar que el usuario tenga permisos para agregar libros
+        if (!auth()->user()->can('admin')) {
+            return response()->json(['error' => 'No autorizado'], 403);
+        }
+
+        // Validar que se haya enviado un book_id
+        $request->validate([
+            'name' => 'required|string',
+            'description' => 'nullable|string',
+            
+        ]);
+
+        // Agregar el libro a la unidad
+        $book = $unity->books()->create([
+            'name' => $request->name,
+            'description' => $request->description,
+            
+        ]);
+
+        return response()->json([
+            'message' => 'Libro agregado exitosamente a la unidad',
+            'unity' => new UnityResource($unity)
+        ], 200);
+    }
+
+    public function removebook(Unity $unity, Request $request)
+    {
+        // Validar que el usuario tenga permisos para eliminar libros
+        if (!auth()->user()->can('admin')) {
+            return response()->json(['error' => 'No autorizado'], 403);
+        }
+
+        // Validar que se haya enviado un book_id
+        $request->validate([
+            'book_id' => 'required|integer|exists:books,id',
+        ]);
+
+        // Eliminar el libro de la unidad
+        $unity->books()->detach($request->input('book_id'));
+
+        return response()->json([
+            'message' => 'Libro eliminado exitosamente de la unidad',
+            'unity' => new UnityResource($unity)
         ], 200);
     }
 }

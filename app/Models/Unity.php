@@ -20,11 +20,17 @@ class Unity extends Api
         'latitud',
         'type',
         'tickets',
+        'mult'
     ];
 
     public function users()
     {
-        return $this->belongsToMany(User::class, 'unity_users', 'unity_id', 'user_id')->withpivot('type');
+        return $this->belongsToMany(User::class)->withPivot('type');
+    }
+
+    public function books()
+    {
+        return $this->morphMany(Book::class, 'bookable');
     }
 
     // Self-referential one-to-many: a Unity may have a parent Unity
@@ -78,6 +84,53 @@ class Unity extends Api
         // Invertir el orden: devolver desde el ancestro más lejano hasta el padre directo
         return $ancestors->reverse()->values();
     }
+
+    public function scopeGetOrPaginate($query)
+    {
+        
+        if(request('select')){
+             $select = request('select');
+             $selectArray = explode(',', $select);
+             $query->select($selectArray);
+        }
+    
+    
+        if (request('include')) {
+            $include = explode(',', request('include'));
+            $query->with($include);
+        }
+
+        
+        
+
+        if(request('filters')){
+            $filters = request('filters');
+            foreach ($filters as $field => $conditions) {
+            foreach ($conditions as $operator => $value) {
+                if (in_array($operator, ['=', '>', '<', '>=', '<=', '!='])) {
+                    $query->where($field, $operator, $value);
+                } 
+
+                if ($operator == 'like') {
+                    $query->where($field, 'like', "%$value%");
+                }
+            }
+        }
+        }
+
+        
+        //dd($query->toSql(), $query->getBindings());
+
+        if (request()->has('perPage')) {
+
+            return $query->paginate(request()->query('perPage'));
+        }
+
+        return $query->get();
+ 
+    }
+
+    
 
 
 }

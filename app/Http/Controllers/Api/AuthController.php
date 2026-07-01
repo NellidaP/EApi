@@ -17,7 +17,7 @@ class AuthController extends Controller implements HasMiddleware
             //new Middleware('auth:api', except: [ 'login']),
             // agrega middleware de permisos, requiriendo el permiso "admin"
             // se excluyen las rutas de registro y login
-            new Middleware('permission:admin', except: ['login']),
+            new Middleware('permission:admin', except: ['login','me']),
         ];
     }
 
@@ -81,8 +81,11 @@ class AuthController extends Controller implements HasMiddleware
     }
 
     public function me()
-    {
-        return response()->json(auth('api')->user());
+    {   $data = auth('api')->user();
+        $permissions = auth('api')->user()->getAllPermissions()->pluck('name');
+        unset($data['permissions']);
+        $data['permissions'] = $permissions;
+        return response()->json($data);
     }
 
     public function myPermissions()
