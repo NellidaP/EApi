@@ -9,4 +9,11 @@ class Servstore extends Api
 {
     /** @use HasFactory<\Database\Factories\ServstoreFactory> */
     use HasFactory;
+    protected $fillable = [
+        'name',
+        'description',
+        'costo',
+        'tipo',
+        'proveedor',
+    ];
 }

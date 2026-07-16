@@ -20,7 +20,7 @@ class Api extends Model
         ]);
     }
 
-    public function scopeGetOrPaginate($query)
+    /* public function scopeGetOrPaginate($query)
     {
         if(request('select')){
              $select = request('select');
@@ -55,5 +55,5 @@ class Api extends Model
 
         return $query->get();
         
-    }
+    } */
 }

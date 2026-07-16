@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\Chat;
 use App\Http\Requests\StoreChatRequest;
 use App\Http\Requests\UpdateChatRequest;
+use App\Http\Controllers\Api\Controller;
 
 class ChatController extends Controller
 {

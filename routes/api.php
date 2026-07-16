@@ -11,6 +11,10 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\UnityController;
 use App\Http\Controllers\Api\BookController;
 use App\Http\Controllers\Api\JornadaController;
+use App\Http\Controllers\Api\TiendaController;
+use App\Http\Controllers\Api\ServstoreController;
+use App\Http\Controllers\Api\ConfigurationController;
+use App\Http\Controllers\Api\ServiceController;
 
 
 
@@ -41,8 +45,11 @@ Route::middleware([
     Route::apiResource('permissions', PermissionController::class);
 
 
-    Route::post('jornadas/geo', [App\Http\Controllers\Api\JornadaController::class, 'geoloc']);
-    
+    //Route::post('jornadas/geo', [App\Http\Controllers\Api\JornadaController::class, 'geoloc']);
+    Route::post('jornadas/create', [JornadaController::class, 'create']);
+    Route::get('jornadas/unities', [JornadaController::class, 'unities']);
+    Route::apiResource('jornadas', JornadaController::class);
+
     Route::get('roles/rolestouser', [RoleController::class, 'assignRolesToUser']);
     Route::apiResource('roles', RoleController::class);
 
@@ -52,6 +59,17 @@ Route::middleware([
     Route::post('unities/{unity}/removebook', [UnityController::class, 'removebook']);
     
     Route::apiResource('unities', UnityController::class);
+
+    Route::apiResource('tiendas', TiendaController::class);
+    Route::apiResource('servstores', ServstoreController::class);
+    Route::apiResource('configurations', ConfigurationController::class);
+    Route::post('services/{service}/adduser', [ServiceController::class, 'adduser']);
+    Route::post('services/{service}/removeuser', [ServiceController::class, 'removeuser']);
+    Route::post('services/{service}/additem', [ServiceController::class, 'additem']);
+    Route::post('services/{service}/removeitem', [ServiceController::class, 'removeitem']);
+    Route::post('services/{service}/updateitems', [ServiceController::class, 'updateitems']);
+  
+    Route::apiResource('services', ServiceController::class);
 
 
     });

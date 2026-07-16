@@ -14,6 +14,8 @@ class ServstoreController extends Controller
     public function index()
     {
         //
+        $servstores = Servstore::all();
+        return response()->json($servstores);
     }
 
     /**
@@ -22,6 +24,7 @@ class ServstoreController extends Controller
     public function create()
     {
         //
+        
     }
 
     /**
@@ -30,6 +33,16 @@ class ServstoreController extends Controller
     public function store(StoreServstoreRequest $request)
     {
         //
+        $data = request()->validate([
+            'name' => 'required|string',
+            'description' => 'required|string',
+            'costo' => 'required|numeric',
+            'tipo' => 'required|string',
+            'proveedor' => 'required|string',
+        ]);
+        $servstore = Servstore::create($data);
+        return response()->json($servstore, 201);
+
     }
 
     /**
@@ -38,6 +51,7 @@ class ServstoreController extends Controller
     public function show(Servstore $servstore)
     {
         //
+        return response()->json($servstore);
     }
 
     /**
@@ -54,6 +68,15 @@ class ServstoreController extends Controller
     public function update(UpdateServstoreRequest $request, Servstore $servstore)
     {
         //
+        $data = request()->validate([
+            'name' => 'sometimes|required|string',
+            'description' => 'sometimes|required|string',
+            'costo' => 'sometimes|required|numeric',
+            'tipo' => 'sometimes|required|string',
+            'proveedor' => 'sometimes|required|string',
+        ]);
+        $servstore->update($data);
+        return response()->json($servstore);
     }
 
     /**
@@ -62,5 +85,7 @@ class ServstoreController extends Controller
     public function destroy(Servstore $servstore)
     {
         //
+        $servstore->delete();
+        return response()->json(['message' => 'Servicio eliminado exitosamente'], 200);
     }
 }

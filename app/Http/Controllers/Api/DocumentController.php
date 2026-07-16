@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\Document;
 use App\Http\Requests\StoreDocumentRequest;
 use App\Http\Requests\UpdateDocumentRequest;
+use App\Http\Controllers\Api\Controller;
 
 class DocumentController extends Controller
 {

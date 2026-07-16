@@ -14,6 +14,16 @@ class UnityResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+
+        $flags =  request('flags');
+        $servsuser = null;
+        $interr = isset($flags['services']['desde']) && isset($flags['services']['hasta']);
+        if($interr){
+            $desde = $flags['services']['desde'];
+            $hasta = $flags['services']['hasta'];
+            $servsuser=$this->servicesBetweenDates($desde, $hasta);
+        }
+
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -24,6 +34,7 @@ class UnityResource extends JsonResource
             'latitud' => $this->latitud,
             'type' => $this->type,
             'tickets' => $this->tickets,
+            'mult' => $this->mult,
 
             'users' => $this->whenLoaded('users', function () {
                 return $this->users->map(function ($user) {
@@ -38,6 +49,9 @@ class UnityResource extends JsonResource
             'children' => UnityResource::collection($this->whenLoaded('children')),
             'parent' => new UnityResource($this->whenLoaded('parent')),
             'books' => BookResource::collection($this->whenLoaded('books')),
+            'services' => $servsuser,
         ];
+
+        return parent::toArray($request);
     }
 }

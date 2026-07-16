@@ -6,6 +6,7 @@ use App\Models\Book;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Http\Resources\BookResource;
+use App\Http\Controllers\Api\Controller;
 
 class BookController extends Controller
 {

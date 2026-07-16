@@ -98,17 +98,29 @@ class User extends Authenticatable implements JWTSubject
         if(request('filters')){
             $filters = request('filters');
             foreach ($filters as $field => $conditions) {
-            foreach ($conditions as $operator => $value) {
-                if (in_array($operator, ['=', '>', '<', '>=', '<=', '!='])) {
-                    $query->where($field, $operator, $value);
-                } 
+                foreach ($conditions as $operator => $value) {
+                    if (in_array($operator, ['=', '>', '<', '>=', '<=', '!='])) {
+                        $query->where($field, $operator, $value);
+                    } 
 
-                if ($operator == 'like') {
-                    $query->where($field, 'like', "%$value%");
+                    if ($operator == 'like') {
+                        $query->where($field, 'like', "%$value%");
+                    }
                 }
             }
         }
-        }
+
+        /* if(request('inJSON')){
+            $filters = request('inJSON');
+            
+            foreach ($filters as $field => $value) {
+                if ($this->relationLoaded($field) || method_exists($this, $field)) {
+                    $query->whereJsonContains($field . '->' . $value, ['id' => $value]);
+                }
+            }
+        } */
+
+        //$query = Service::whereJsonContains('users->' . $this->id, ['id' => $this->id]);
 
         
         //dd($query->toSql(), $query->getBindings());
@@ -174,8 +186,23 @@ class User extends Authenticatable implements JWTSubject
         return $this->morphMany(Book::class, 'bookable');
     }
 
-    
-    
+    public function jornadas()
+    {
+        return $this->hasMany(Jornada::class);
+    }
 
-    
+    public function services()
+    {
+        return $this->hasMany(Service::class);
+    }
+
+    public function servsuser($fecha_inicio = null, $fecha_fin = null)
+    {
+        $query = Service::whereJsonContains('users->' . $this->id, ['id' => $this->id]);
+        if ($fecha_inicio && $fecha_fin) {
+            $query->whereBetween('fecha_inicio', [$fecha_inicio, $fecha_fin]);
+        }
+
+        return $query;
+    }
 }

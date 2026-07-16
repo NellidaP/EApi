@@ -130,6 +130,28 @@ class Unity extends Api
  
     }
 
+    public function jornadasIn()
+    {
+        return $this->hasMany(Jornada::class, 'unity_in_id');
+    }
+
+    public function jornadasOut()
+    {
+        return $this->hasMany(Jornada::class, 'unity_out_id');
+    }
+
+    public function services()
+    {
+        return $this->hasMany(Service::class);
+    }
+
+    public function servicesBetweenDates($startDate, $endDate)
+    {
+        return $this->services()
+                    ->whereBetween('fecha_inicio', [$startDate, $endDate])
+                    ->get();
+    }
+
     
 
 

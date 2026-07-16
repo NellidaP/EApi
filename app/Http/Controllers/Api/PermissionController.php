@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 use App\Http\Resources\PermissionResource;
+use App\Http\Controllers\Api\Controller;
 
 class PermissionController extends Controller
 {
