@@ -22,6 +22,8 @@ class UserResource extends JsonResource
         
         $interr = isset($flags['servsuser']['desde']) && isset($flags['servsuser']['hasta']);
         //dd($interr);
+        $desde = null;
+        $hasta = null;
         if($interr){
             $desde = $flags['servsuser']['desde'];
             $hasta = $flags['servsuser']['hasta'];

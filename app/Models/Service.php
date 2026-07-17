@@ -7,7 +7,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\ModelTrait1;
 
-class Service extends Model
+class Service extends Api
 {
     use ModelTrait1;
 
@@ -126,8 +126,9 @@ class Service extends Model
 
     }
     
-    public  function scopeGetOrPaginate($query)
+    public function scopeGetOrPaginate($query)
     {
+        
         if(request('select')){
              $select = request('select');
              $selectArray = explode(',', $select);
@@ -140,6 +141,38 @@ class Service extends Model
             $query->with($include);
         }
 
-}
+        
+        
+
+        if(request('filters')){
+            $filters = request('filters');
+            foreach ($filters as $field => $conditions) {
+            foreach ($conditions as $operator => $value) {
+                if (in_array($operator, ['=', '>', '<', '>=', '<=', '!='])) {
+                    $query->where($field, $operator, $value);
+                } 
+
+                if ($operator == 'like') {
+                    $query->where($field, 'like', "%$value%");
+                }
+            }
+        }
+        }
+
+        
+        //dd($query->toSql(), $query->getBindings());
+
+        if (request()->has('perPage')) {
+
+            return $query->paginate(request()->query('perPage'));
+        }
+
+        return $query->get();
+ 
+    }
 
 }
+
+
+
+

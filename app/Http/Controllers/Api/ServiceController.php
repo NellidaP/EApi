@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\Service;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\Controller;
+use App\Http\Resources\ServiceResource;
 
 class ServiceController extends Controller
 {
@@ -14,6 +15,8 @@ class ServiceController extends Controller
     public function index()
     {
         //
+        $services = ServiceResource::collection(Service::getOrPaginate());
+        return $services;
     }
 
     /**
