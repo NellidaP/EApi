@@ -20,7 +20,8 @@ class Unity extends Api
         'latitud',
         'type',
         'tickets',
-        'mult'
+        'mult',
+        'costo_ficha',
     ];
 
     public function users()

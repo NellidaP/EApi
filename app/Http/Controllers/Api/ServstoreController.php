@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Servstore;
-use App\Http\Requests\StoreServstoreRequest;
 use App\Http\Requests\UpdateServstoreRequest;
+use Illuminate\Http\Request;
 
 class ServstoreController extends Controller
 {
@@ -14,8 +14,8 @@ class ServstoreController extends Controller
     public function index()
     {
         //
-        $servstores = Servstore::all();
-        return response()->json($servstores);
+        $servstores = ServstoreResource::collection(Servstore::getOrPaginate());
+        return $servstores;
     }
 
     /**
@@ -30,7 +30,7 @@ class ServstoreController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreServstoreRequest $request)
+    public function store(Request $request)
     {
         //
         $data = request()->validate([
@@ -65,7 +65,7 @@ class ServstoreController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateServstoreRequest $request, Servstore $servstore)
+    public function update(Request $request, Servstore $servstore)
     {
         //
         $data = request()->validate([
@@ -76,6 +76,7 @@ class ServstoreController extends Controller
             'proveedor' => 'sometimes|required|string',
         ]);
         $servstore->update($data);
+        $servstore->refresh(); // Refresh the model instance to get the latest data
         return response()->json($servstore);
     }
 

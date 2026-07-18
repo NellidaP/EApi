@@ -45,6 +45,7 @@ class UnityController extends Controller
             'latitud' => 'nullable|string',
             'type' => 'nullable|string',
             'mult' => 'nullable|numeric',
+            'costo_ficha' => 'nullable|numeric',
         ]);
 
         $unity = Unity::create($data);
@@ -81,12 +82,13 @@ class UnityController extends Controller
             'name' => 'sometimes|required|string',
             'description' => 'sometimes|nullable|string',
             'unity_id' => 'sometimes|nullable|integer',
-            'description' => 'sometimes|nullable|string',
+            //'description' => 'sometimes|nullable|string',
             'direction' => 'sometimes|nullable|string',
             'longitud' => 'sometimes|nullable|string',
             'latitud' => 'sometimes|nullable|string',
             'type' => 'sometimes|nullable|string',
             'mult' => 'sometimes|nullable|numeric',
+            'costo_ficha' => 'sometimes|nullable|numeric',
         ]);
 
         $unity->update($data);
