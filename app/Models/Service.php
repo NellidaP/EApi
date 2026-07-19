@@ -159,6 +159,16 @@ class Service extends Api
         }
         }
 
+        if(request('flags')){
+            $flags = request('flags');
+            if(isset($flags['users'])){
+                $userId = $flags['users'];
+                $query->whereJsonContains('users->' . $userId, [
+                    'id' => (int)$userId,
+                ]);
+            }
+        }
+
         
         //dd($query->toSql(), $query->getBindings());
 

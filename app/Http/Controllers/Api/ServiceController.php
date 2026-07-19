@@ -47,7 +47,7 @@ class ServiceController extends Controller
             //'user_id' => 'required|integer|exists:users,id',
             'items' => 'nullable|array',
         ]);
-
+        $data['user_id'] = auth('api')->id(); // Set the user_id to the authenticated user's ID
         $data['estado'] = 0; // Set estado to 0 by default
 
         $configuration = Configuration::first();

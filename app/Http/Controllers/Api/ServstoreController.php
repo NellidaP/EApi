@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\Servstore;
 use App\Http\Requests\UpdateServstoreRequest;
 use Illuminate\Http\Request;
+use App\Http\Resources\ServstoreResource;
 
 class ServstoreController extends Controller
 {

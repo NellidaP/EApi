@@ -70,6 +70,7 @@ Route::middleware([
     Route::post('services/{service}/updateitems', [ServiceController::class, 'updateitems']);
   
     Route::apiResource('services', ServiceController::class);
+    
 
     
 

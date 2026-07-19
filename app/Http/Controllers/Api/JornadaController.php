@@ -50,6 +50,14 @@ class JornadaController extends Controller
             if($ultimaj && -now()->diffInHours(Carbon::parse($ultimaj->fechahora_ini))>15){
                 $ultimaj = null;
             }
+            
+        }else{
+            if(-now()->diffInMinutes(Carbon::parse($ultimaj->fechahora_ini)) < 10){
+                $addmessage='Hay una Jornada iniciada en ['.$ultimaj->unityIn->name.'] y debe esperar '.
+                            round(10 + now()->diffInMinutes(Carbon::parse($ultimaj->fechahora_ini)), 0).
+                            ' minutos para cerrarla';
+            
+            }
         }
         
 
@@ -76,6 +84,7 @@ class JornadaController extends Controller
 
             return response()->json(['message' => 'Se encuentra en varias ubicaciones: ',
                                         'ultimaj_uni_name' => $ultimaj ? $ultimaj->unityIn->name : null,
+                                        'addmessage' => $addmessage ?? null,
                                         'unities' => $unids], 200);
 
 
@@ -179,8 +188,8 @@ class JornadaController extends Controller
     {
         //
         $data = $request->validate([
-            'unity_in' => 'required|integer|exists:unities,id',
-            'unity_out' => 'nullable|integer|exists:unities,id',
+            'unity_in_id' => 'required|integer|exists:unities,id',
+            'unity_out_id' => 'nullable|integer|exists:unities,id',
             'user_id' => 'required|integer|exists:users,id',
             'fechahora_ini' => 'required|date',
             'fechahora_fin' => 'nullable|date|after:fechahora_ini',
@@ -222,10 +231,11 @@ class JornadaController extends Controller
      */
     public function update(Request $request, Jornada $jornada)
     {
+        //dd($request->all());
         //
         $data = $request->validate([
-            'unity_in' => 'sometimes|required|integer|exists:unities,id',
-            'unity_out' => 'sometimes|nullable|integer|exists:unities,id',
+            'unity_in_id' => 'sometimes|required|integer|exists:unities,id',
+            'unity_out_id' => 'sometimes|nullable|integer|exists:unities,id',
             'user_id' => 'sometimes|required|integer|exists:users,id',
             'fechahora_ini' => 'sometimes|required|date',
             'fechahora_fin' => 'sometimes|nullable|date|after:fechahora_ini',

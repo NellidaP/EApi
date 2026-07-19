@@ -35,6 +35,7 @@ class UnityResource extends JsonResource
             'type' => $this->type,
             'tickets' => $this->tickets,
             'mult' => $this->mult,
+            'costo_ficha' => $this->costo_ficha,
 
             'users' => $this->whenLoaded('users', function () {
                 return $this->users->map(function ($user) {

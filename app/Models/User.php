@@ -110,6 +110,16 @@ class User extends Authenticatable implements JWTSubject
             }
         }
 
+        /* if(request('flags')){
+            $flags = request('flags');
+            if(isset($flags['id_in_servs'])){
+                $userId = $flags['id_in_servs'];
+                $query->whereJsonContains('users->' . $userId, [
+                    'id' => (int)$userId,
+                ]);
+            }
+        } */
+
         /* if(request('inJSON')){
             $filters = request('inJSON');
             
