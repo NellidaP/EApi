@@ -36,16 +36,17 @@ class UserResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-
+            'type' => $this->type,
             'email' => $this->email,
             'permissions' => $this->getAllPermissions()->pluck( 'id'),
             'unities' => UnityResource::collection($this->whenLoaded('unities')),
             'roles' => auth()->user()->hasAnyPermission(['view-roles','admin']) ? RoleResource::collection($this->whenLoaded('roles')) : null  ,
             'userdata' => new UserdataResource($this->whenLoaded('userdata')),
+            'userdata' => json_decode($this->userdata, JSON_FORCE_OBJECT),
             'books' => BookResource::collection($this->whenLoaded('books')),
             'activo' => $this->activo,
             'services' => ServiceResource::collection($this->whenLoaded('services')),
-            'servsuser' =>  $servsuser=$this->servsuser($desde, $hasta)->get(),
+            'servsuser' =>  $servsuser=json_decode($this->servsuser($desde, $hasta)->get(), JSON_FORCE_OBJECT),
         ];
 
 

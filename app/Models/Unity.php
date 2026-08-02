@@ -88,6 +88,8 @@ class Unity extends Api
 
     public function scopeGetOrPaginate($query)
     {
+
+        $user_type = auth()->user()->type ?? null;
         
         if(request('select')){
              $select = request('select');
@@ -99,6 +101,12 @@ class Unity extends Api
         if (request('include')) {
             $include = explode(',', request('include'));
             $query->with($include);
+        }
+
+        if ($user_type === 3) {
+            $query->whereHas('users', function ($q) {
+                $q->where('user_id', auth()->id());
+            });
         }
 
         
@@ -117,6 +125,24 @@ class Unity extends Api
                 }
             }
         }
+        }
+
+
+
+        if(request('sort')){
+            $sortFields = explode(',', request('sort'));
+
+            foreach ($sortFields as $sortField) {
+                
+                $direction = 'asc';
+
+                if (substr($sortField, 0, 1) == '-') {
+                    $direction = 'desc';
+                    $sortField = substr($sortField, 1);
+                }
+
+                $query->orderBy($sortField, $direction);
+            }
         }
 
         

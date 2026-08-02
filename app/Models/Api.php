@@ -14,8 +14,8 @@ class Api extends Model
     {
         static::addGlobalScopes([
             //FilterScope::class,
-            SelectScope::class,
-            SortScope::class,
+            //SelectScope::class,
+            //SortScope::class,
             //IncludeScope::class
         ]);
     }

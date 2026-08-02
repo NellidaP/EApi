@@ -48,7 +48,8 @@ class UnityResource extends JsonResource
                 });
             }),
             'children' => UnityResource::collection($this->whenLoaded('children')),
-            'parent' => new UnityResource($this->whenLoaded('parent')),
+            //'parent' => new UnityResource($this->whenLoaded('parent')),
+            'parent' => $this->parent,
             'books' => BookResource::collection($this->whenLoaded('books')),
             'services' => $servsuser,
         ];

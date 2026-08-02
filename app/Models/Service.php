@@ -53,14 +53,18 @@ class Service extends Api
         $this->save();
     }
 
+    public function chat(){
+        return $this->morphOne(Chat::class, 'chatable');
+    }
+
     public function addUser(User $user)
     {
         $users = $this->getUsersData();
         if (!in_array($user->id, $users)) {
-            $users[] = [$user->id => [
+            $users[$user->id] = [
                 'name' => $user->name,
                 'id' => $user->id,
-            ]];
+            ];
             $this->setUsersData($users);
         }
     }
@@ -68,9 +72,9 @@ class Service extends Api
     public function removeUser($userId)
     {
         $users = $this->getUsersData();
-        if (($key = array_search($userId, $users)) !== false) {
-            unset($users[$key]);
-            $this->setUsersData(array_values($users));
+        if (isset($users[$userId])) {
+            unset($users[$userId]);
+            $this->setUsersData($users);
         }
     }
 
@@ -128,6 +132,8 @@ class Service extends Api
     
     public function scopeGetOrPaginate($query)
     {
+
+        $user_type = auth()->user()->type ?? null;
         
         if(request('select')){
              $select = request('select');
@@ -159,6 +165,14 @@ class Service extends Api
         }
         }
 
+       if($user_type == 3){
+            $query->where('user_id', auth()->id());
+        }
+
+
+
+
+
         if(request('flags')){
             $flags = request('flags');
             if(isset($flags['users'])){
@@ -166,6 +180,28 @@ class Service extends Api
                 $query->whereJsonContains('users->' . $userId, [
                     'id' => (int)$userId,
                 ]);
+            }
+        }
+
+        if($user_type == 0){
+            $query->whereJsonContains('users->' . auth()->id(), [
+                'id' => (int)auth()->id(),
+            ]);
+        }
+
+        if(request('sort')){
+            $sortFields = explode(',', request('sort'));
+
+            foreach ($sortFields as $sortField) {
+                
+                $direction = 'asc';
+
+                if (substr($sortField, 0, 1) == '-') {
+                    $direction = 'desc';
+                    $sortField = substr($sortField, 1);
+                }
+
+                $query->orderBy($sortField, $direction);
             }
         }
 

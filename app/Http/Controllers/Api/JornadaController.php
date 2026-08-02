@@ -14,7 +14,7 @@ use App\Http\Controllers\Api\Controller;
 class JornadaController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the resource 01.
      */
     public function index()
     {
@@ -40,6 +40,8 @@ class JornadaController extends Controller
             'latitud' => 'required|numeric',
             'longitud' => 'required|numeric',
         ]);
+
+        
         $data['user_id'] = auth('api')->user()->id;
         $unities = Unity::where('unity_id',1)->get();
 
@@ -83,7 +85,7 @@ class JornadaController extends Controller
             }
 
             return response()->json(['message' => 'Se encuentra en varias ubicaciones: ',
-                                        'ultimaj_uni_name' => $ultimaj ? $ultimaj->unityIn->name : null,
+                                        'ultimaj_uni_name' => $ultimaj ? $ultimaj->unityIn?->name : null,
                                         'addmessage' => $addmessage ?? null,
                                         'unities' => $unids], 200);
 
@@ -101,8 +103,9 @@ class JornadaController extends Controller
             'latitud' => 'required|numeric',
             'longitud' => 'required|numeric',
             'unity_id' => 'required|integer|exists:unities,id',
-            'file'=>'required|file|mimes:jpg,jpeg,png|max:2048'
+            'file'=>'required|file|mimes:jpg,jpeg,png'
                     ]);
+
 
         
         $data['user_id'] = auth('api')->user()->id;
@@ -164,6 +167,21 @@ class JornadaController extends Controller
                     ]);
                     $message='Se ha iniciado una nueva Jornada en ['.$unity->name.']';
                     return response()->json(['message' => $message], 200);
+                }
+
+                if($ultimaj->unity_in_id != $unity->id){
+                    $jornadan = Jornada::create([
+                        'latitud' => $request->latitud,
+                        'longitud' => $request->longitud,
+                        'unity_in_id' => $unity->id,
+                        'user_id' => auth('api')->user()->id,
+                        'url_in' => $url,
+                        'url_out' => 'no',
+                        'ent' => 0,
+                        'fechahora_ini' => now()->toDateTimeString()
+                    ]);
+                    $message='Se tenia una Jornada Iniciada en ['.$ultimaj->unityIn->name.'], pero se ha iniciado una nueva Jornada en ['.$unity->name.']';
+                    return response()->json(['message' => $message], 200); 
                 }
 
                 $ultimaj->update([

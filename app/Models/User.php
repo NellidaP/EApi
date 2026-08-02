@@ -31,6 +31,7 @@ class User extends Authenticatable implements JWTSubject
         'email',
         'password',
         'activo',
+        'type'
     ];
 
     /**
@@ -47,8 +48,8 @@ class User extends Authenticatable implements JWTSubject
     {
         static::addGlobalScopes([
             //FilterScope::class,
-            SelectScope::class,
-            SortScope::class,
+            //SelectScope::class,
+            //SortScope::class,
             //IncludeScope::class
         ]);
     }
@@ -109,6 +110,37 @@ class User extends Authenticatable implements JWTSubject
                 }
             }
         }
+
+
+        if(request('sort')){
+            $sortFields = explode(',', request('sort'));
+
+            foreach ($sortFields as $sortField) {
+                
+                $direction = 'asc';
+
+                if (substr($sortField, 0, 1) == '-') {
+                    $direction = 'desc';
+                    $sortField = substr($sortField, 1);
+                }
+
+                $query->orderBy($sortField, $direction);
+            }
+        }
+
+        // $sortFields = explode(',', request('sort'));
+
+        // foreach ($sortFields as $sortField) {
+        //     
+        //     $direction = 'asc';
+
+        //     if (substr($sortField, 0, 1) == '-') {
+        //         $direction = 'desc';
+        //         $sortField = substr($sortField, 1);
+        //     }
+
+        //     $query->orderBy($sortField, $direction);
+        // }
 
         /* if(request('flags')){
             $flags = request('flags');

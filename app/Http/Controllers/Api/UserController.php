@@ -59,6 +59,7 @@ public static function middleware(): array
             'dni' => 'sometimes|required|string',
             'birthday' => 'sometimes|required|string',
             'activo' => 'sometimes|required|integer|in:0,1',
+            'type' => 'sometimes|required|integer',
         ]);
 
         //dd($request->all());
@@ -68,6 +69,7 @@ public static function middleware(): array
             'email' => $data['email'] ?? null,
             'password' => $data['password'] ?? null,
             'activo' => $data['activo'] ?? null,
+            'type' => $data['type'] ?? null,
             
         ];
 

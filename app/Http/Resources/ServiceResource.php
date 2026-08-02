@@ -4,6 +4,9 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\UnityResource;
+use App\Http\Resources\UserResource;
+use App\Http\Resources\ChatResource;
 
 class ServiceResource extends JsonResource
 {
@@ -34,10 +37,11 @@ class ServiceResource extends JsonResource
             'costo_total' => $this->costo_total,
             'unity_id' => $this->unity_id,
             'user_id' => $this->user_id,
-            'users' => $this->users,
-            'items' => $this->items,
+            'users' => json_decode($this->users),
+            'items' => json_decode($this->items),
             'unity' => new UnityResource($this->whenLoaded('unity')),
             'user' => new UserResource($this->whenLoaded('user')),
+            'chat' => new ChatResource($this->whenLoaded('chat')),
             
         ];
     }

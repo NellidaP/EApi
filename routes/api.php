@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\TiendaController;
 use App\Http\Controllers\Api\ServstoreController;
 use App\Http\Controllers\Api\ConfigurationController;
 use App\Http\Controllers\Api\ServiceController;
+use App\Http\Controllers\Api\ChatController;
 
 
 
@@ -63,15 +64,17 @@ Route::middleware([
     Route::apiResource('tiendas', TiendaController::class);
     Route::apiResource('servstores', ServstoreController::class);
     Route::apiResource('configurations', ConfigurationController::class);
-    Route::post('services/{service}/adduser', [ServiceController::class, 'adduser']);
-    Route::post('services/{service}/removeuser', [ServiceController::class, 'removeuser']);
-    Route::post('services/{service}/additem', [ServiceController::class, 'additem']);
-    Route::post('services/{service}/removeitem', [ServiceController::class, 'removeitem']);
-    Route::post('services/{service}/updateitems', [ServiceController::class, 'updateitems']);
+    Route::post('service/{service}/changestate', [ServiceController::class, 'changestate']);
+    Route::post('services/{service}/addusertoservice', [ServiceController::class, 'addUserToService']);
+    Route::post('services/{service}/removeusertoservice', [ServiceController::class, 'removeUserFromService']);
+    //Route::post('services/{service}/additem', [ServiceController::class, 'additem']);
+    //Route::post('services/{service}/removeitem', [ServiceController::class, 'removeitem']);
+    //Route::post('services/{service}/updateitems', [ServiceController::class, 'updateitems']);
   
     Route::apiResource('services', ServiceController::class);
-    
-
+    Route::post('chats/{chat}/addmessage', [ChatController::class, 'addMessage']);
+    Route::post('chats/{chat}/deletemessage', [ChatController::class, 'deleteMessage']);
+    Route::apiResource('chats', ChatController::class);
     
 
 
