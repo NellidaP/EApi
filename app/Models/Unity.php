@@ -46,6 +46,11 @@ class Unity extends Api
         return $this->hasMany(Unity::class, 'unity_id');
     }
 
+    public function inventories()
+    {
+        return $this->hasMany(Inventory::class);
+    }
+
     /**
      * Obtener todos los descendientes de esta unidad de forma recursiva.
      * Devuelve una colección con todos los hijos, nietos, bisnietos, etc.
