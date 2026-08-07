@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\InventoryController;
 use App\Http\Controllers\Api\AuthController;
 use Illuminate\Support\Facades\Gate;
 use App\Models\User;
@@ -16,6 +17,7 @@ use App\Http\Controllers\Api\ServstoreController;
 use App\Http\Controllers\Api\ConfigurationController;
 use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\Api\ChatController;
+use App\Http\Controllers\Api\StoreController;
 
 
 
@@ -76,6 +78,22 @@ Route::middleware([
     Route::post('chats/{chat}/deletemessage', [ChatController::class, 'deleteMessage']);
     Route::apiResource('chats', ChatController::class);
     
+    Route::apiResource('stores', StoreController::class);
+
+    
+    Route::post('inventories/{inventory}/storeorder', [InventoryController::class, 'storeOrder']);
+    Route::post('inventories/{inventory}/updateorder/{orderIndex}', [InventoryController::class, 'updateOrder']);
+    Route::post('inventories/{inventory}/deleteorder/{orderIndex}', [InventoryController::class, 'deleteOrder']);
+    Route::post('inventories/{inventory}/changeorderstate/{orderIndex}', [InventoryController::class, 'changeOrderState']);
+    Route::post('inventories/{inventory}/ordertooperation/{orderIndex}', [InventoryController::class, 'orderToOperation']);
+    Route::post('inventories/{inventory}/storeoperation', [InventoryController::class, 'storeOperation']);
+    Route::post('inventories/{inventory}/updateoperation/{operationIndex}', [InventoryController::class, 'updateOperation']);
+    Route::post('inventories/{inventory}/addoperation/{operationIndex}', [InventoryController::class, 'addOperation']);
+    Route::post('inventories/{inventory}/applyoperation/{operationIndex}', [InventoryController::class, 'applyOperation']);
+    Route::post('inventories/{inventory}/deleteoperation/{operationIndex}', [InventoryController::class, 'deleteOperation']);
+    
+
+    Route::apiResource('inventories',InventoryController::class);
 
 
     });
