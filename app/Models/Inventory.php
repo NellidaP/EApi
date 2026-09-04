@@ -33,7 +33,8 @@ class Inventory extends Api
     //  "item_index": { "item_index": "item_index", 
     //      "cant": "item_cant" , 
     //      "code": "item_code", 
-    //      "name":"item_name"
+    //      "name":"item_name",
+    //      "min_cant": "min_cant",
     //  }
     // }
     //
@@ -74,7 +75,8 @@ class Inventory extends Api
     //       "name": "item_name"
     //     }
     //   },
-    //   "type": "inlet/outlet",
+    //   "operation_index": "operation_index",
+    //   "type": "inlet/outlet/balance",
     //   "state": "pending/processed/canceled",
     //   "datetime_created": { "datetime":"YYYY-MM-DD hh:mm", "user_id":"user_id", "user_name":"user_name"},
     //   "datetime_updated": { "datetime":"YYYY-MM-DD hh:mm", "user_id":"user_id", "user_name":"user_name"},
@@ -98,12 +100,14 @@ class Inventory extends Api
             $order = $orders[$orderIndex];
             $operations = $this->operations ?? [];
             $operation_index = now()->toDateTimeString();
+            $operations[$operation_index]['operation_index'] = $operation_index; // Set the operation index
+            $operations[$operation_index]['state'] = 'pending'; // Set the initial state of the operation to 'pending'
             $operations[$operation_index] = [
                 'items' => $order['items'],
                 'type' => $order['type']?? 'inlet', // Default to 'inlet' if not specified
                 'order_index' => $orderIndex, // link to the order that generated this operation
             ];
-            $operations[$operation_index]['datetime'] = [
+            $operations[$operation_index]['datetime_created'] = [
                 'datetime' => now()->toDateTimeString(),
                 'user_id' => auth()->id() ?? null,
                 'user_name' => auth()->user()->name ?? null,
@@ -131,7 +135,7 @@ class Inventory extends Api
             foreach ($operation['items'] as $itemKey => $itemData) {
                 $itemCode = $itemData['code'] ?? null;
                 
-                if ($operation['type'] === 'inlet') {
+                if ($operation['type'] === 'inlet' || $operation['type'] === 'balance') {
                     // Add items to inventory
                     $found = false;
                     foreach ($items as $key => &$item) {
@@ -180,6 +184,53 @@ class Inventory extends Api
         return [];
     }
 
+    public function createBalanceOperation($realItems)
+    {
+        $currentItems = $this->items ?? [];
+        $balanceItems = [];
+
+        // Calculate the difference between real items and current items
+        foreach ($realItems as $itemKey => $realItem) {
+            $currentItem = $currentItems[$itemKey] ?? null;
+            if ($currentItem) {
+                $cantDifference = $realItem['cant'] - $currentItem['cant'];
+                if ($cantDifference !== 0) {
+                    $balanceItems[$itemKey] = [
+                        'item_index' => $itemKey,
+                        'cant' => $cantDifference,
+                        'code' => $realItem['code'],
+                        'name' => $realItem['name'],
+                        'old_cant' => $currentItem['cant'],
+                        'new_cant' => $realItem['cant'],
+                    ];
+
+                }
+            } else {
+                // If the item doesn't exist in current items, it's an inlet operation
+                $balanceItems[$itemKey] = [
+                    'item_index' => $itemKey,
+                    'cant' => $realItem['cant'],
+                    'code' => $realItem['code'],
+                    'name' => $realItem['name'],
+                    'old_cant' => 0,
+                    'new_cant' => $realItem['cant'],
+                ];
+                
+            }
+        }
+
+        $operationType = 'balance';
+
+        // Create a balance operation if there are any differences
+        if (!empty($balanceItems)) {
+            return $this->addOperation($balanceItems, $operationType);
+        }
+
+        return null; // No balance operation needed
+
+    }
+    
+
     public function updateItemsWithOperations()
     {
         $this->items = []; // Reset items
@@ -224,6 +275,7 @@ class Inventory extends Api
                 ],
             ],
             'state' => 'created',
+            'order_index' => $orderIndex, // link to the order that generated this operation
         ];
         $this->orders = $orders;
         $this->setHasOrderPending();
@@ -302,6 +354,7 @@ class Inventory extends Api
                 'user_name' => auth()->user()->name ?? null,
             ],
         ];
+        $operations[$operationIndex]['operation_index'] = $operationIndex;
         $this->operations = $operations;
         $this->save();
 
@@ -337,6 +390,30 @@ class Inventory extends Api
              $this->updateItemsWithOperations(); // Update items based on remaining operations
         }
 
+    }
+
+    // Create an order with items below their minimum quantity
+    public function createOrderWithItemsBelowMinCant()
+    {
+        $items = $this->items ?? [];
+        $orderItems = [];
+
+        foreach ($items as $itemIndex => $item) {
+            if (isset($item['min_cant']) && isset($item['cant']) && $item['cant'] < $item['min_cant']) {
+                $orderItems[$itemIndex] = [
+                    'code' => $item['code'],
+                    'cant' => $item['min_cant'] - $item['cant'], // Order enough to reach min_cant
+                    'name' => $item['name'],
+                ];
+            }
+        }
+
+        if (!empty($orderItems)) {
+            $this->addOrder($orderItems);
+            return true; // Order created
+        }
+
+        return false; // No items below min_cant, no order created
     }
 
     public function passItemsBetweenInventoriesUsingOperation( Inventory $targetInventory, $items)
@@ -506,6 +583,15 @@ class Inventory extends Api
         $this->save();
 
         return $hasPending;
+    }
+
+    public function getOperationState($operationIndex)
+    {
+        $operations = $this->operations ?? [];
+        if (isset($operations[$operationIndex])) {
+            return $operations[$operationIndex]['state'];
+        }
+        return null;
     }
 
     

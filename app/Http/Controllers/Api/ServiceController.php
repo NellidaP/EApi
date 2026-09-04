@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Api\Controller;
 use App\Http\Resources\ServiceResource;
 use Carbon\Carbon;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ServiceController extends Controller
 {
@@ -23,6 +24,16 @@ class ServiceController extends Controller
         return $services;
     }
 
+    public function exportall()
+    {
+        $user = auth('api')->user();
+        $services = $user->can('servicio.exportar')
+            ? Service::all()
+            : Service::where('user_id', $user->id)->get();
+
+        return Excel::download(new \App\Exports\ServiceExport( $services ), 'services.xlsx');
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -30,7 +41,7 @@ class ServiceController extends Controller
     {
         //
         $data = $request->validate([
-            'description' => 'required|string|max:255',
+            'description' => 'required|string|max:2000',
             'tipo' => 'required|string|max:255',
             //'estado' => 'required|string|max:255',
             'tipo_pago' => 'required|string|max:255',
@@ -130,7 +141,7 @@ class ServiceController extends Controller
     {
         //
         $data = $request->validate([
-            'description' => 'sometimes|required|string|max:255',
+            'description' => 'sometimes|required|string|max:2000',
             'tipo' => 'sometimes|required|string|max:255',
             'estado' => 'sometimes|required|string|max:255',
             'tipo_pago' => 'sometimes|required|string|max:255',
@@ -170,6 +181,33 @@ class ServiceController extends Controller
                 $totalitems += $item['cantidad'] * $item['costo'];
             }
         }
+
+        // permisos asociados a poder cambiar el estado de los servicios [1: "servicio.asignar", 2: "servicio.ejecutar",
+        // 3: "servicio.supervisar", 4: "servicio.procesar", 5: "servicio.pagar"]
+        
+        if (array_key_exists('estado', $data)) {
+            $permisosEstado = [
+                1 => 'servicio.asignar',
+                2 => 'servicio.ejecutar',
+                3 => 'servicio.supervisar',
+                4 => 'servicio.procesar',
+                5 => 'servicio.pagar',
+            ];
+
+            $user = auth('api')->user();
+            // return response()->json(['can' => auth('api')->user()->hasPermissionTo($permisosEstado[$data['estado']]),
+            // 'permiso' => $permisosEstado[$data['estado']]]);
+            
+            if (isset($data['estado'])) {
+                $permisoEstado = $permisosEstado[$data['estado']];
+
+                if (!$user || !$user->can($permisoEstado) || (!$user->can('servicio.back') && $data['estado'] < $service->estado)) {
+                    unset($data['estado']);
+                }
+            }
+        }
+
+        
 
         $data['costo_total'] = $data['costo_asignado'] 
                                 + $totalitems
@@ -334,11 +372,25 @@ class ServiceController extends Controller
 
     function changestate(Service $service, Request $request)
     {
-        $request->validate([
-            'estado' => 'required|integer|in:0,1,2,3,4',
+        $data = $request->validate([
+            'estado' => 'required|integer|in:1,2,3,4,5',
         ]);
 
-        $service->estado = $request->input('estado');
+        $permisosEstado = [
+            1 => 'servicio.asignar',
+            2 => 'servicio.ejecutar',
+            3 => 'servicio.supervisar',
+            4 => 'servicio.procesar',
+            5 => 'servicio.pagar',
+        ];
+        $user = auth('api')->user();
+
+        if (!$user || !$user->can($permisosEstado[$data['estado']])) {
+            return response()->json(['error' => 'Unauthorized to change service state',
+                'service' => new ServiceResource($service)], 403);
+        }
+
+        $service->estado = $data['estado'];
         $service->save();
 
         return response()->json(['message' => 'Service state changed successfully',

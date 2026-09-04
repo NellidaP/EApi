@@ -66,6 +66,7 @@ Route::middleware([
     Route::apiResource('tiendas', TiendaController::class);
     Route::apiResource('servstores', ServstoreController::class);
     Route::apiResource('configurations', ConfigurationController::class);
+    Route::post('services/exportall', [ServiceController::class, 'exportall']);
     Route::post('service/{service}/changestate', [ServiceController::class, 'changestate']);
     Route::post('services/{service}/addusertoservice', [ServiceController::class, 'addUserToService']);
     Route::post('services/{service}/removeusertoservice', [ServiceController::class, 'removeUserFromService']);
@@ -88,10 +89,11 @@ Route::middleware([
     Route::post('inventories/{inventory}/ordertooperation/{orderIndex}', [InventoryController::class, 'orderToOperation']);
     Route::post('inventories/{inventory}/storeoperation', [InventoryController::class, 'storeOperation']);
     Route::post('inventories/{inventory}/updateoperation/{operationIndex}', [InventoryController::class, 'updateOperation']);
+    Route::post('inventories/{inventory}/updateprocessedoperation/{operationIndex}', [InventoryController::class, 'updateProcessedOperation']);
     Route::post('inventories/{inventory}/addoperation/{operationIndex}', [InventoryController::class, 'addOperation']);
     Route::post('inventories/{inventory}/applyoperation/{operationIndex}', [InventoryController::class, 'applyOperation']);
     Route::post('inventories/{inventory}/deleteoperation/{operationIndex}', [InventoryController::class, 'deleteOperation']);
-    
+    Route::post('inventories/{inventory}/deleteprocessedoperation/{operationIndex}', [InventoryController::class, 'deleteProcessedOperation']);
 
     Route::apiResource('inventories',InventoryController::class);
 

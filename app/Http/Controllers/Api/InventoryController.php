@@ -56,6 +56,8 @@ class InventoryController extends Controller
             'items.*.code' => 'required|string',
             'items.*.cant' => 'required|integer|min:1',
             'items.*.name' => 'required|string',
+            'items.*.store_index' => 'sometimes|integer',
+            'items.*.store_name' => 'sometimes|string',
         ]);
 
         // Transform items into associative array with unique ID
@@ -65,7 +67,9 @@ class InventoryController extends Controller
                 'item_index' => $index,
                 'cant' => $item['cant'],
                 'code' => $item['code'],
-                'name' => $item['name']
+                'name' => $item['name'],
+                'store_index' => $item['store_index'] ?? null,
+                'store_name' => $item['store_name'] ?? null,
             ];
         }
 
@@ -82,6 +86,8 @@ class InventoryController extends Controller
             'items.*.code' => 'required|string',
             'items.*.cant' => 'required|integer|min:1',
             'items.*.name' => 'required|string',
+            'items.*.store_index' => 'sometimes|integer',
+            'items.*.store_name' => 'sometimes|string',
         ]);
         // Transform items into associative array with unique ID
         $formattedItems = [];
@@ -90,7 +96,9 @@ class InventoryController extends Controller
                 'item_index' => $index,
                 'cant' => $item['cant'],
                 'code' => $item['code'],
-                'name' => $item['name']
+                'name' => $item['name'],
+                'store_index' => $item['store_index'] ?? null,
+                'store_name' => $item['store_name'] ?? null,
             ];
         }
         
@@ -134,7 +142,7 @@ class InventoryController extends Controller
         if ($data['state'] ?? $nextState === 'received') {
             // If the order state is changed to 'received', apply the order to the inventory
             $operationIndex = $inventory->setOrdertoOperations($orderIndex);
-            $inventory->applyOperation($operationIndex);
+            //$inventory->applyOperation($operationIndex);
             $inventory->updateHasOrderPendingByState();
         }
 
@@ -184,10 +192,34 @@ class InventoryController extends Controller
             'items.*.code' => 'required|string',
             'items.*.cant' => 'required|integer|min:1',
             'items.*.name' => 'required|string',
+            'state' => 'sometimes|string',
+        ]);
+
+        $oldState = $inventory->getOperationState($operationIndex);
+        
+        // Update the operation in the inventory
+        $inventory->updateOperation($operationIndex, $data['items'], $data['type']);
+        
+        if ($oldState !== 'processed' && $inventory->getOperationState($operationIndex) === 'processed') {
+            $inventory->updateItemsWithOperations();
+        }
+        
+        return new InventoryResource($inventory);
+    }
+
+    public function updateProcessedOperation(Request $request, Inventory $inventory, $operationIndex)
+    {
+        $data = $request->validate([
+            'type' => 'required|string|in:inlet,outlet',
+            'items' => 'required|array',
+            'items.*.code' => 'required|string',
+            'items.*.cant' => 'required|integer|min:1',
+            'items.*.name' => 'required|string',
         ]);
 
         // Update the operation in the inventory
         $inventory->updateOperation($operationIndex, $data['items'], $data['type']);
+        $inventory->updateItemsWithOperations(); // 
 
         
         return new InventoryResource($inventory);
@@ -224,6 +256,17 @@ class InventoryController extends Controller
 
         return new InventoryResource($inventory);
     }
+
+    public function deleteProcessedOperation(Request $request, Inventory $inventory, $operationIndex)
+    {
+        // Delete the operation from the inventory
+        $inventory->deleteOperation($operationIndex);
+        $inventory->updateItemsWithOperations();
+
+        return new InventoryResource($inventory);
+    }
+
+
 
     /**
      * Display the specified resource.

@@ -17,6 +17,12 @@ class UnityController extends Controller
     {
 
         //
+        $userdata_type = auth('api')->user()->type;
+        if($userdata_type == 3){
+            $unities = UnityResource::collection(auth('api')->user()->unities()->get());
+            return  response()->json($unities);
+        }
+
         $unities = UnityResource::collection(Unity::getOrPaginate());
 
         return response()->json($unities);

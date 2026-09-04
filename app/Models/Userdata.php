@@ -16,7 +16,10 @@ class UserData extends Api
         'data',
         'data_ticket',
         'documents',
-        'type',
+        'type',  // "0"=>Mucama
+                  // "1"=>Empleado
+                  // "2"=>Administrador
+                  // "3"=>Cliente
         
         // Agrega aquí otros campos que quieras permitir asignar masivamente
     ];

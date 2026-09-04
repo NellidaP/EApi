@@ -19,12 +19,30 @@ class JornadaController extends Controller
     public function index()
     {
         //
-        if(auth('api')->user()->can('jornada.index')){
+        $userdata_type = auth('api')->user()->type;
+        if(auth('api')->user()->can('jornada.index') ){
             $jornadas = JornadaResource::collection(Jornada::getOrPaginate());
 
             return $jornadas;
-        }else{
-            $jornadas = JornadaResource::collection(Jornada::getOrPaginate());
+        }elseif($userdata_type == 3 ){
+            $unityIds = auth('api')->user()->unities()
+                ->wherePivot('type', 0)->get()
+                ->pluck('id');
+
+            $jornadas = JornadaResource::collection(
+                Jornada::whereIn('unity_in_id', $unityIds)->getOrPaginate()
+            );
+
+            //return [2];
+
+            return $jornadas;
+        }
+        else{
+            $jornadas = JornadaResource::collection(
+                Jornada::where('user_id', auth('api')->user()->id)
+                    ->whereBetween('fechahora_ini', [now()->subMonth(), now()])
+                    ->getOrPaginate()
+            );
             return  $jornadas;
         }
     }
@@ -43,7 +61,9 @@ class JornadaController extends Controller
 
         
         $data['user_id'] = auth('api')->user()->id;
-        $unities = Unity::where('unity_id',1)->get();
+        //$unities = Unity::where('unity_id',1)->get();
+        $unities = Unity::all();
+        
 
         $ultimaj =  Jornada::where('user_id', auth('api')->user()->id)
                                 ->where('ent',0)   
@@ -73,7 +93,7 @@ class JornadaController extends Controller
                 
                 if($dist<.0015*$mult){
                     
-                    $unids->push(['id' => $unidad->id, 'name' => $unidad->name, 'dist' => $dist*100000]);
+                    $unids->push(['id' => $unidad->id, 'name' => $unidad->name, 'dist' => $dist*100000, 'parent_name' => $unidad->parent?->name]);
                     //break;
                 }
             }

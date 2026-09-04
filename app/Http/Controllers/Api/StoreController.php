@@ -34,11 +34,23 @@ class StoreController extends Controller
 
         //dd($data);
 
+        // Transform items into associative array with unique ID
+        $formattedItems = [];
+        foreach ($data['items'] ?? [] as $index => $item) {
+            $unique_id = uniqid(); // Use existing ID or generate new one
+            $formattedItems[$unique_id] = [
+                'item_id' => $unique_id,
+                'cost' => $item['cost'],
+                'code' => $item['code'],
+                'name' => $item['name']
+            ];
+        }
+
         $store = Store::create([
             'name' => $data['name'],
             'description' => $data['description'] ?? null,
             'supplier' => $data['supplier'] ?? null,
-            'items' => json_encode($data['items'] ?? [], JSON_FORCE_OBJECT),
+            'items' => json_encode($formattedItems ?? [], JSON_FORCE_OBJECT),
         ]);
 
         return new StoreResource($store);
@@ -64,6 +76,20 @@ class StoreController extends Controller
             'supplier' => 'nullable|string|max:255',
             'items' => 'nullable|array',
         ]);
+
+        // Transform items into associative array with unique ID
+        /* $existingItems = json_decode($store->items, true) ?? [];
+        $formattedItems = $existingItems;
+        
+        foreach ($data['items'] ?? [] as $index => $item) {
+            $unique_id = $existingItems[$index]['item_id'] ?? uniqid(); // Use existing ID or generate new one
+            $formattedItems[$unique_id] = [
+                'item_id' => $unique_id,
+                'cost' => $item['cost'],
+                'code' => $item['code'],
+                'name' => $item['name']
+            ];
+        } */
 
         $store->update([
             'name' => $data['name'],

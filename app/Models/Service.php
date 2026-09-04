@@ -13,13 +13,13 @@ class Service extends Api
 
     protected $fillable = [
         'description',
-        'tipo',
-        'estado',
-        'tipo_pago',
+        'tipo', // 0: Nomal, 1: Mucama, 2: Final de Obra
+        'estado', // 0: Creado, 1: Asignado, 2: Ejecutado, 3: Supervisado, 4: Procesado, 5: Pagado , 6: Cancelado
+        'tipo_pago', // 0: Efectivo, 1: Tarjeta, 2: Transferencia
         'n_fichas',
         'n_personas',
         'costo_ficha',
-        'tipo_ambiente',
+        'tipo_ambiente', // 0: Normal, 1: Monoambiente, 2: DosAmbientes , 3: TripleAmbiente, 4: CuatroAmbientes
         'costo_ambiente',
         'costo_asignado',
         'costo_hora',
@@ -28,9 +28,27 @@ class Service extends Api
         'costo_total',
         'unity_id',
         'user_id',
-        'users',
-        'items',
+        'users', // Array of users associated ( that does the service) with the service
+        'items', // Array of items associated with the service
     ];
+
+
+    // items
+    // {
+    //  "item_id": {
+    //          "name": "Name Of Item",
+    //          "id": item_id,
+    //          "costo": "cost_of_items",
+    //          "cantidad": "cantidad_of_items"
+    //      }
+    // }
+    // users
+    // {
+    //  "user_id": {
+    //          "name": "Name Of User",
+    //          "id": user_id
+    //      }
+    // }
 
     public function unity()
     {

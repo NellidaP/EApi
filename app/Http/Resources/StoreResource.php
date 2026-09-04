@@ -19,7 +19,7 @@ class StoreResource extends JsonResource
             'name' => $this->name,
             'description' => $this->description,
             'supplier' => $this->supplier,
-            'items' => $this->items,
+            'items' => json_decode($this->items),
         ];
     }
 }
