@@ -52,7 +52,7 @@ class ServiceController extends Controller
             //'costo_ambiente' => 'required|numeric',
             'costo_asignado' => 'required|numeric',
             'costo_hora' => 'required|numeric',
-            'fecha_inicio' => 'required|date',
+            'fecha_inicio' => 'required|date',  // fecha y hora de inicio de actividad
             'tiempo_horas' => 'required|numeric',
             //'costo_total' => 'required|numeric',
             'unity_id' => 'required|integer|exists:unities,id',
@@ -63,8 +63,27 @@ class ServiceController extends Controller
             'items.*.name' => 'sometimes|required|string|max:255',
             'items.*.id' => 'sometimes|required|numeric',
         ]);
+
+        $fechaInicio = Carbon::parse($data['fecha_inicio']);
+        $ahora = Carbon::now();
+        $esDiaSiguiente = $fechaInicio->isSameDay($ahora->copy()->addDay());
+        $horaLimiteCreacion = $ahora->copy()->setTime(18, 0, 0);
+        $horaMinimaServicio = $fechaInicio->copy()->setTime(8, 0, 0);
+
+        if ($fechaInicio->lessThanOrEqualTo($horaMinimaServicio)
+            || ($esDiaSiguiente && $ahora->greaterThan($horaLimiteCreacion))
+            || $ahora->diffInHours($fechaInicio, false) <= 12) {
+            return response()->json([
+                'error' => 'La fecha del servicio debe ser posterior a las 08:00 y tener más de 18 horas de anticipación.',
+            ], 404);
+        }
+
+        
+
         $data['user_id'] = auth('api')->id(); // Set the user_id to the authenticated user's ID
         $data['estado'] = 0; // Set estado to 0 by default
+
+
 
         $configuration = Configuration::first();
 
@@ -74,7 +93,7 @@ class ServiceController extends Controller
                         'costo_cuatro_ambientes',];
         
         $data['tipo_ambiente'] = Unity::find($data['unity_id'])->type;
-        $data['costo_ambiente'] = $configuration->{$matrizColum[$data['tipo_ambiente']]};
+        $data['costo_ambiente'] = $configuration->{$matrizColum[$data['tipo_ambiente']-1]};
         $data['users'] = json_encode([], JSON_FORCE_OBJECT);
         if (isset($data['items'])) {
             $tems2=[];
@@ -139,6 +158,8 @@ class ServiceController extends Controller
      */
     public function update(Request $request, Service $service)
     {
+
+    
         //
         $data = $request->validate([
             'description' => 'sometimes|required|string|max:2000',
@@ -166,6 +187,15 @@ class ServiceController extends Controller
             'items.*.id' => 'sometimes|required|numeric|gt:0',
 
         ]);
+
+        $fechaInicio = Carbon::parse($data['fecha_inicio']);
+        $ahora = Carbon::now();
+        $esDiaSiguiente = $fechaInicio->isSameDay($ahora->copy()->addDay());
+        $horaLimiteCreacion = $ahora->copy()->setTime(18, 0, 0);
+        $horaMinimaServicio = $fechaInicio->copy()->setTime(8, 0, 0);
+
+                  
+
         if (isset($data['items'])) {
             $tems2=[];
             foreach ($data['items'] as $item) {
@@ -201,7 +231,9 @@ class ServiceController extends Controller
             if (isset($data['estado'])) {
                 $permisoEstado = $permisosEstado[$data['estado']];
 
-                if (!$user || !$user->can($permisoEstado) || (!$user->can('servicio.back') && $data['estado'] < $service->estado)) {
+                if (!$user || !$user->can($permisoEstado) 
+                    || (!$user->can('servicio.back') && $data['estado'] < $service->estado)
+                    ) {
                     unset($data['estado']);
                 }
             }
